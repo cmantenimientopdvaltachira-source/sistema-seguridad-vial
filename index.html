@@ -8,6 +8,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Librería html2pdf para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Estilos optimizados para evitar cortes bruscos en el PDF */
+        @media print {
+            body {
+                background-color: white !important;
+            }
+            #ficha-printable {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
@@ -187,7 +202,7 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
                     
-                    // Configurar Botón de Llamada Telefónica al Familiar (Usa contactoTelefono)
+                    // Configurar Botón de Llamada Telefónica al Familiar (Limpio de guiones)
                     const telefonoFamiliar = data.contactoTelefono;
                     const btnLlamar = document.getElementById('btn-llamar');
                     
@@ -209,7 +224,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp con GPS y el teléfono del familiar
+                    // Configurar Botón de Alerta WhatsApp corregido y ordenado
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -227,23 +242,23 @@
                             ? `https://maps.google.com/?q=${latitudActual},${longitudActual}`
                             : `Ubicación por confirmar en sitio de emergencia`;
 
-                        const mensajeWp = `🚨 *¡AVISO DE EMERGENCIA VIAL!*\n\nLe informamos que el ciudadano *${data.nombreCompleto || 'Afectado'}*, titular del documento *${data.cedula || 'N/A'}*, acaba de sufrir un accidente.\n\nEn estos momentos estamos procediendo a atender la situación en el sitio y en los próximos minutos será trasladado a un centro asistencial. Teléfono de contacto: *${telefonoFamiliar}*.\n\n📍 *Ubicación exacta del incidente:*\n${enlaceUbicacion}`;
+                        const mensajeWp = `🚨 *¡AVISO DE EMERGENCIA VIAL!*\n\nSe ha reportado un incidente vial que involucra al ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\nSe solicita su atención y coordinación urgente. A continuación, la ubicación exacta en el sitio:\n${enlaceUbicacion}`;
 
                         const urlWp = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensajeWp)}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Botón de Descarga PDF
+                    // Configurar Botón de Descarga PDF optimizado
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
                         const elemento = document.getElementById('ficha-printable');
                         btnPdf.style.display = 'none';
                         
                         const opciones = {
-                            margin:       10,
+                            margin:       [10, 10, 10, 10],
                             filename:     `Ficha_Emergencia_${data.cedula || 'Afectado'}.pdf`,
                             image:        { type: 'jpeg', quality: 0.98 },
-                            html2canvas:  { scale: 2, useCORS: true },
+                            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                         };
 
@@ -272,6 +287,7 @@
     </script>
 </body>
 </html>
+
 
 
 
