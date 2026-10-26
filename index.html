@@ -15,10 +15,15 @@
             }
             #ficha-printable {
                 width: 100% !important;
+                max-width: 100% !important.
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 5px !important;
                 box-shadow: none !important;
                 border: none !important;
+                page-break-inside: avoid;
+            }
+            .space-y-5 > * + * {
+                margin-top: 0.5rem !important;
             }
         }
     </style>
@@ -28,9 +33,9 @@
     <!-- Contenedor principal que se exportará a PDF -->
     <div id="ficha-printable" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200">
         <!-- Encabezado de Alerta -->
-        <div class="bg-red-600 text-white p-5 text-center">
+        <div class="bg-red-600 text-white p-4 text-center">
             <h1 class="text-2xl font-black uppercase tracking-wider">🚨 Emergencia Vial</h1>
-            <p class="text-sm font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
+            <p class="text-xs font-extrabold text-red-100 mt-0.5 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
         <!-- Contenedor de Carga -->
@@ -39,13 +44,13 @@
         </div>
 
         <!-- Ficha Médica (Visible solo si carga con éxito) -->
-        <div id="ficha-container" class="p-6 space-y-5 hidden">
+        <div id="ficha-container" class="p-5 space-y-4 hidden">
             
             <!-- BLOQUE 1: Datos Personales -->
-            <div class="border-b pb-4">
-                <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-2xl font-extrabold text-slate-900 mt-1.5">--</h2>
-                <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div class="border-b pb-3">
+                <span class="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
+                <h2 id="nombre-usuario" class="text-xl font-extrabold text-slate-900 mt-1">--</h2>
+                <div class="text-sm text-slate-700 mt-2 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
                     <p>Documento: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
                     <p>Teléfono Propio: <span id="telefono-personal" class="font-bold text-slate-900">--</span></p>
@@ -55,52 +60,52 @@
 
             <!-- BLOQUE 2: Información Médica -->
             <div>
-                <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider mb-2">2. Información Médica</span>
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center flex flex-col justify-center">
-                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
-                        <span id="tipo-sangre" class="text-4xl font-black text-red-700 mt-1 block">--</span>
+                <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wider mb-1.5">2. Información Médica</span>
+                <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                    <div class="bg-red-50 p-3 rounded-xl border border-red-200 text-center flex flex-col justify-center">
+                        <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
+                        <span id="tipo-sangre" class="text-3xl font-black text-red-700 mt-0.5 block">--</span>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-center space-y-1">
-                        <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wide">Alergias</span>
-                        <p id="alergias" class="text-base font-semibold text-slate-900">--</p>
+                    <div class="bg-red-50 p-3 rounded-xl border border-red-200 flex flex-col justify-center space-y-1">
+                        <span class="block text-xs font-extrabold text-red-700 uppercase tracking-wide">Alergias</span>
+                        <p id="alergias" class="text-sm font-semibold text-slate-900">--</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 bg-orange-50 p-4 rounded-xl border border-orange-200">
-                    <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Condiciones Crónicas</span>
-                        <p id="condiciones-medicas" class="text-base font-semibold text-slate-900">--</p>
+                <div class="grid grid-cols-2 gap-2.5 bg-orange-50 p-3 rounded-xl border border-orange-200">
+                    <div class="space-y-0.5">
+                        <span class="block text-xs font-extrabold text-orange-800 uppercase tracking-wide">Condiciones Crónicas</span>
+                        <p id="condiciones-medicas" class="text-sm font-semibold text-slate-900">--</p>
                     </div>
-                    <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Medicamentos</span>
-                        <p id="medicamentos" class="text-base font-semibold text-slate-900">--</p>
+                    <div class="space-y-0.5">
+                        <span class="block text-xs font-extrabold text-orange-800 uppercase tracking-wide">Medicamentos</span>
+                        <p id="medicamentos" class="text-sm font-semibold text-slate-900">--</p>
                     </div>
                 </div>
             </div>
 
             <!-- BLOQUE 3: Contacto de Emergencia y Acciones -->
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5">
                 <div>
-                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">3. Contacto de Emergencia</span>
-                    <h3 id="contacto-nombre" class="text-2xl font-extrabold text-slate-900 mt-1.5">--</h3>
-                    <p class="text-base text-slate-700 mt-1">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
+                    <span class="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">3. Contacto de Emergencia</span>
+                    <h3 id="contacto-nombre" class="text-xl font-extrabold text-slate-900 mt-1">--</h3>
+                    <p class="text-sm text-slate-700">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
                 </div>
                 
                 <!-- Botones de Acción Activos para el Familiar -->
-                <div class="grid grid-cols-1 gap-2.5 pt-1">
-                    <a id="btn-llamar" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                <div class="grid grid-cols-1 gap-2 pt-0.5">
+                    <a id="btn-llamar" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
                         📞 Llamar al Familiar
                     </a>
-                    <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                    <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
                         💬 Enviar Alerta WhatsApp (Con GPS)
                     </a>
                 </div>
             </div>
 
             <!-- BLOQUE 4: Vehículo y Póliza -->
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">4. Vehículo y Póliza</span>
-                <div class="text-base text-slate-700 space-y-1">
+            <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <span class="block text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-1.5">4. Vehículo y Póliza</span>
+                <div class="text-sm text-slate-700 space-y-0.5">
                     <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
@@ -109,16 +114,16 @@
             </div>
 
             <!-- BLOQUE 5: Sistema Integral de Emergencia 171 -->
-            <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
-                <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">5. Sistema Integral de Emergencia</span>
-                <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
-                <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+            <div class="bg-red-50 border border-red-200 p-3 rounded-xl space-y-1.5">
+                <span class="block text-xs font-extrabold text-red-700 uppercase tracking-wider">5. Sistema Integral de Emergencia</span>
+                <p class="text-sm text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
+                <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
                 </a>
             </div>
 
             <!-- Botón de Exportar a PDF -->
-            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
                 📄 Descargar Ficha en PDF
             </button>
         </div>
@@ -132,7 +137,7 @@
     </div>
 
     <!-- Pie de página -->
-    <footer class="text-center text-xs text-slate-400 py-4">
+    <footer class="text-center text-xs text-slate-400 py-3">
         Sistema de Seguridad Vial &bull; San Cristóbal
     </footer>
 
@@ -220,7 +225,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp (Con una sola sirena al inicio)
+                    // Configurar Botón de Alerta WhatsApp
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -247,19 +252,18 @@ Esta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunicars
 📍 Ubicación exacta:
 ${enlaceUbicacion}`;
 
-
                         const urlWp = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensajeWp)}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Botón de Descarga PDF optimizado
+                    // Configurar Botón de Descarga PDF optimizado a una sola página
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
                         const elemento = document.getElementById('ficha-printable');
                         btnPdf.style.display = 'none';
                         
                         const opciones = {
-                            margin:       [10, 10, 10, 10],
+                            margin:       [5, 5, 5, 5],
                             filename:     `Ficha_Emergencia_${data.cedula || 'Afectado'}.pdf`,
                             image:        { type: 'jpeg', quality: 0.98 },
                             html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
@@ -291,6 +295,7 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
+
 
 
 
