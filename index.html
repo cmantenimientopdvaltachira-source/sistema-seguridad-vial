@@ -3,39 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergencia Vial - Ficha Médica</title>
+    <title>RB-Emergencia Vial - Ficha Médica</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Librería html2pdf para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
+        /* Ocultar el contenedor de PDF profesional en la pantalla normal */
+        #pdf-template {
+            display: none;
+        }
+
+        /* Estilos de impresión */
         @media print {
             body {
                 background-color: white !important;
-            }
-            #ficha-printable {
-                width: 100% !important;
-                max-width: 100% !important.
-                margin: 0 !important;
-                padding: 5px !important;
-                box-shadow: none !important;
-                border: none !important;
-                page-break-inside: avoid;
-            }
-            .space-y-5 > * + * {
-                margin-top: 0.5rem !important;
             }
         }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
-    <!-- Contenedor principal que se exportará a PDF -->
+    <!-- CONTENEDOR VISTA WEB (Tarjeta interactiva móvil) -->
     <div id="ficha-printable" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200">
         <!-- Encabezado de Alerta -->
-        <div class="bg-red-600 text-white p-4 text-center">
-            <h1 class="text-2xl font-black uppercase tracking-wider">🚨 Emergencia Vial</h1>
-            <p class="text-xs font-extrabold text-red-100 mt-0.5 uppercase tracking-wider">Datos médicos de primera respuesta</p>
+        <div class="bg-red-600 text-white p-5 text-center">
+            <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB-Emergencia Vial</h1>
+            <p class="text-sm font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
         <!-- Contenedor de Carga -->
@@ -44,13 +38,13 @@
         </div>
 
         <!-- Ficha Médica (Visible solo si carga con éxito) -->
-        <div id="ficha-container" class="p-5 space-y-4 hidden">
+        <div id="ficha-container" class="p-6 space-y-5 hidden">
             
             <!-- BLOQUE 1: Datos Personales -->
-            <div class="border-b pb-3">
-                <span class="block text-xs font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-xl font-extrabold text-slate-900 mt-1">--</h2>
-                <div class="text-sm text-slate-700 mt-2 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div class="border-b pb-4">
+                <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
+                <h2 id="nombre-usuario" class="text-2xl font-extrabold text-slate-900 mt-1.5">--</h2>
+                <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>Documento: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
                     <p>Teléfono Propio: <span id="telefono-personal" class="font-bold text-slate-900">--</span></p>
@@ -60,52 +54,52 @@
 
             <!-- BLOQUE 2: Información Médica -->
             <div>
-                <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wider mb-1.5">2. Información Médica</span>
-                <div class="grid grid-cols-2 gap-2.5 mb-2.5">
-                    <div class="bg-red-50 p-3 rounded-xl border border-red-200 text-center flex flex-col justify-center">
-                        <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
-                        <span id="tipo-sangre" class="text-3xl font-black text-red-700 mt-0.5 block">--</span>
+                <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider mb-2">2. Información Médica</span>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center flex flex-col justify-center">
+                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
+                        <span id="tipo-sangre" class="text-4xl font-black text-red-700 mt-1 block">--</span>
                     </div>
-                    <div class="bg-red-50 p-3 rounded-xl border border-red-200 flex flex-col justify-center space-y-1">
-                        <span class="block text-xs font-extrabold text-red-700 uppercase tracking-wide">Alergias</span>
-                        <p id="alergias" class="text-sm font-semibold text-slate-900">--</p>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-center space-y-1">
+                        <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wide">Alergias</span>
+                        <p id="alergias" class="text-base font-semibold text-slate-900">--</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2.5 bg-orange-50 p-3 rounded-xl border border-orange-200">
-                    <div class="space-y-0.5">
-                        <span class="block text-xs font-extrabold text-orange-800 uppercase tracking-wide">Condiciones Crónicas</span>
-                        <p id="condiciones-medicas" class="text-sm font-semibold text-slate-900">--</p>
+                <div class="grid grid-cols-2 gap-3 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <div class="space-y-1">
+                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Condiciones Crónicas</span>
+                        <p id="condiciones-medicas" class="text-base font-semibold text-slate-900">--</p>
                     </div>
-                    <div class="space-y-0.5">
-                        <span class="block text-xs font-extrabold text-orange-800 uppercase tracking-wide">Medicamentos</span>
-                        <p id="medicamentos" class="text-sm font-semibold text-slate-900">--</p>
+                    <div class="space-y-1">
+                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Medicamentos</span>
+                        <p id="medicamentos" class="text-base font-semibold text-slate-900">--</p>
                     </div>
                 </div>
             </div>
 
             <!-- BLOQUE 3: Contacto de Emergencia y Acciones -->
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div>
-                    <span class="block text-xs font-extrabold text-slate-600 uppercase tracking-wider">3. Contacto de Emergencia</span>
-                    <h3 id="contacto-nombre" class="text-xl font-extrabold text-slate-900 mt-1">--</h3>
-                    <p class="text-sm text-slate-700">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
+                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">3. Contacto de Emergencia</span>
+                    <h3 id="contacto-nombre" class="text-2xl font-extrabold text-slate-900 mt-1.5">--</h3>
+                    <p class="text-base text-slate-700 mt-1">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
                 </div>
                 
                 <!-- Botones de Acción Activos para el Familiar -->
-                <div class="grid grid-cols-1 gap-2 pt-0.5">
-                    <a id="btn-llamar" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                <div class="grid grid-cols-1 gap-2.5 pt-1">
+                    <a id="btn-llamar" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         📞 Llamar al Familiar
                     </a>
-                    <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                    <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         💬 Enviar Alerta WhatsApp (Con GPS)
                     </a>
                 </div>
             </div>
 
             <!-- BLOQUE 4: Vehículo y Póliza -->
-            <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
-                <span class="block text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-1.5">4. Vehículo y Póliza</span>
-                <div class="text-sm text-slate-700 space-y-0.5">
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">4. Vehículo y Póliza</span>
+                <div class="text-base text-slate-700 space-y-1">
                     <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
@@ -114,16 +108,16 @@
             </div>
 
             <!-- BLOQUE 5: Sistema Integral de Emergencia 171 -->
-            <div class="bg-red-50 border border-red-200 p-3 rounded-xl space-y-1.5">
-                <span class="block text-xs font-extrabold text-red-700 uppercase tracking-wider">5. Sistema Integral de Emergencia</span>
-                <p class="text-sm text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
-                <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-2.5 px-3 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+            <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
+                <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">5. Sistema Integral de Emergencia</span>
+                <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
+                <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
                 </a>
             </div>
 
             <!-- Botón de Exportar a PDF -->
-            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                 📄 Descargar Ficha en PDF
             </button>
         </div>
@@ -136,9 +130,122 @@
         </div>
     </div>
 
-    <!-- Pie de página -->
-    <footer class="text-center text-xs text-slate-400 py-3">
-        Sistema de Seguridad Vial &bull; San Cristóbal
+    <!-- PLANTILLA EXCLUSIVA PARA EL PDF PROFESIONAL (FORMULARIO / DOCUMENTO OFICIAL) -->
+    <div id="pdf-template" class="p-8 bg-white text-slate-900 font-sans">
+        <!-- Membrete Corporativo -->
+        <div class="border-b-2 border-red-600 pb-4 mb-6 flex justify-between items-start">
+            <div>
+                <h1 class="text-xl font-black text-red-600 tracking-wider uppercase">RB-Emergencia Vial</h1>
+                <p class="text-xs text-slate-500 font-bold uppercase">Municipio San Cristóbal &bull; Estado Táchira</p>
+                <h2 class="text-2xl font-bold text-slate-900 mt-2">FICHA MÉDICA DE ATENCIÓN PRIORITARIA</h2>
+            </div>
+            <div class="text-right">
+                <span class="inline-block bg-red-100 text-red-800 text-xs font-bold px-2.5 py-1 rounded border border-red-300">DOCUMENTO OFICIAL</span>
+                <p class="text-xs text-slate-500 mt-2"><strong>Fecha de Emisión:</strong></p>
+                <p id="pdf-fecha" class="text-xs font-bold text-slate-800">--</p>
+            </div>
+        </div>
+
+        <!-- Sección 1: Identificación y Datos Personales -->
+        <div class="mb-6">
+            <h3 class="text-xs font-black uppercase tracking-wider bg-slate-100 p-2 border-l-4 border-slate-700 text-slate-700 mb-3">1. Datos Personales del Ciudadano</h3>
+            <table class="w-full text-xs text-left border-collapse">
+                <tbody>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600 w-1/3">Nombre Completo:</td>
+                        <td id="pdf-nombre" class="py-2 font-bold text-slate-900 text-sm">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Cédula de Identidad:</td>
+                        <td id="pdf-cedula" class="py-2 text-slate-800 font-semibold">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Fecha de Nacimiento:</td>
+                        <td id="pdf-fecha-nac" class="py-2 text-slate-800">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Teléfono Personal:</td>
+                        <td id="pdf-telefono" class="py-2 text-slate-800">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Dirección de Domicilio:</td>
+                        <td id="pdf-direccion" class="py-2 text-slate-800">--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección 2: Perfil Médico Clínico -->
+        <div class="mb-6">
+            <h3 class="text-xs font-black uppercase tracking-wider bg-red-50 p-2 border-l-4 border-red-600 text-red-700 mb-3">2. Antecedentes y Perfil Médico</h3>
+            <div class="grid grid-cols-2 gap-4 mb-3">
+                <div class="border border-red-200 bg-red-50/50 p-3 rounded">
+                    <span class="block text-[10px] font-bold text-red-600 uppercase">Grupo Sanguíneo y RH</span>
+                    <span id="pdf-sangre" class="text-xl font-black text-red-700">--</span>
+                </div>
+                <div class="border border-red-200 bg-red-50/50 p-3 rounded">
+                    <span class="block text-[10px] font-bold text-red-600 uppercase">Alergias Conocidas</span>
+                    <span id="pdf-alergias" class="text-xs font-bold text-slate-800">--</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="border border-slate-200 p-3 rounded bg-slate-50">
+                    <span class="block text-[10px] font-bold text-slate-600 uppercase">Condiciones Crónicas</span>
+                    <span id="pdf-condiciones" class="text-xs font-semibold text-slate-800">--</span>
+                </div>
+                <div class="border border-slate-200 p-3 rounded bg-slate-50">
+                    <span class="block text-[10px] font-bold text-slate-600 uppercase">Medicamentos Habituales</span>
+                    <span id="pdf-medicamentos" class="text-xs font-semibold text-slate-800">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Contacto Familiar de Emergencia -->
+        <div class="mb-6">
+            <h3 class="text-xs font-black uppercase tracking-wider bg-slate-100 p-2 border-l-4 border-slate-700 text-slate-700 mb-3">3. Contacto de Emergencia Notificado</h3>
+            <table class="w-full text-xs border-collapse">
+                <tbody>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600 w-1/3">Nombre del Contacto:</td>
+                        <td id="pdf-contacto-nombre" class="py-2 font-bold text-slate-900">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Parentesco:</td>
+                        <td id="pdf-contacto-parentesco" class="py-2 text-slate-800">--</td>
+                    </tr>
+                    <tr class="border-b border-slate-200">
+                        <td class="py-2 font-bold text-slate-600">Teléfono de Contacto:</td>
+                        <td id="pdf-contacto-telefono" class="py-2 text-slate-800 font-semibold">--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sección 4: Registro del Vehículo -->
+        <div class="mb-8">
+            <h3 class="text-xs font-black uppercase tracking-wider bg-slate-100 p-2 border-l-4 border-slate-700 text-slate-700 mb-3">4. Datos del Vehículo y Póliza</h3>
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div>
+                    <p class="py-1"><strong>Placa:</strong> <span id="pdf-placa">--</span></p>
+                    <p class="py-1"><strong>Tipo de Vehículo:</strong> <span id="pdf-vehiculo">--</span></p>
+                </div>
+                <div>
+                    <p class="py-1"><strong>Aseguradora / HCM:</strong> <span id="pdf-aseguradora">--</span></p>
+                    <p class="py-1"><strong>N° de Póliza:</strong> <span id="pdf-poliza">--</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie de página Oficial -->
+        <div class="mt-12 pt-4 border-t border-slate-300 text-center text-[10px] text-slate-500">
+            <p>Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial.</p>
+            <p class="mt-1">Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.</p>
+        </div>
+    </div>
+
+    <!-- Pie de página Web -->
+    <footer class="text-center text-xs text-slate-400 py-4">
+        RB-Emergencia Vial &bull; San Cristóbal
     </footer>
 
     <!-- Script de conexión a Firebase y lógica de botones -->
@@ -172,20 +279,18 @@
                 if (docSnap.exists() && docSnap.data().estado === "activo") {
                     const data = docSnap.data();
                     
-                    // 1. Datos Personales
+                    // 1. Cargar Vista Web
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
                     document.getElementById('cedula-usuario').innerText = data.cedula || "No registrada";
                     document.getElementById('fecha-nacimiento').innerText = data.fechaNacimiento || "No registrada";
                     document.getElementById('telefono-personal').innerText = data.telefonoPersonal || "No registrado";
                     document.getElementById('direccion').innerText = data.direccion || "No registrada";
                     
-                    // 2. Información Médica
                     document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
                     document.getElementById('alergias').innerText = data.alergias || "Ninguna";
                     document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
                     document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
                     
-                    // 3. Contacto de Emergencia
                     let nombreContacto = data.contactoNombre || "No registrado";
                     let parentescoContacto = data.contactoParentesco || "";
 
@@ -200,13 +305,33 @@
                     document.getElementById('contacto-nombre').innerText = nombreContacto;
                     document.getElementById('contacto-parentesco').innerText = parentescoContacto || "No especificado";
                     
-                    // 4. Vehículo y Póliza
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
                     document.getElementById('tipo-vehiculo').innerText = data.tipoVehiculo || "No especificado";
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
                     
-                    // Configurar Botón de Llamada Telefónica al Familiar
+                    // 2. Cargar Datos en la Plantilla de PDF Oficial
+                    document.getElementById('pdf-nombre').innerText = data.nombreCompleto || "No registrado";
+                    document.getElementById('pdf-cedula').innerText = data.cedula || "No registrada";
+                    document.getElementById('pdf-fecha-nac').innerText = data.fechaNacimiento || "No registrada";
+                    document.getElementById('pdf-telefono').innerText = data.telefonoPersonal || "No registrado";
+                    document.getElementById('pdf-direccion').innerText = data.direccion || "No registrada";
+
+                    document.getElementById('pdf-sangre').innerText = data.tipoSangre || "N/A";
+                    document.getElementById('pdf-alergias').innerText = data.alergias || "Ninguna";
+                    document.getElementById('pdf-condiciones').innerText = data.condicionesMedicas || "Ninguna";
+                    document.getElementById('pdf-medicamentos').innerText = data.medicamentos || "Ninguno";
+
+                    document.getElementById('pdf-contacto-nombre').innerText = nombreContacto;
+                    document.getElementById('pdf-contacto-parentesco').innerText = parentescoContacto || "No especificado";
+                    document.getElementById('pdf-contacto-telefono').innerText = data.contactoTelefono || "No registrado";
+
+                    document.getElementById('pdf-placa').innerText = data.placaVehiculo || "Sin placa";
+                    document.getElementById('pdf-vehiculo').innerText = data.tipoVehiculo || "No especificado";
+                    document.getElementById('pdf-aseguradora').innerText = data.aseguradora || "Particular";
+                    document.getElementById('pdf-poliza').innerText = data.nroPoliza || "N/A";
+
+                    // Configurar Botón de Llamada al Familiar
                     const telefonoFamiliar = data.contactoTelefono;
                     const btnLlamar = document.getElementById('btn-llamar');
                     
@@ -225,7 +350,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp
+                    // Configurar Botón de Alerta WhatsApp EXACTO
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -256,22 +381,36 @@ ${enlaceUbicacion}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Botón de Descarga PDF optimizado a una sola página
+                    // Configurar Generación de PDF Profesional con Fecha Dinámica
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
-                        const elemento = document.getElementById('ficha-printable');
-                        btnPdf.style.display = 'none';
+                        const pdfElement = document.getElementById('pdf-template');
                         
+                        // Asignar fecha y hora actual exacta al documento
+                        const ahora = new Date();
+                        const fechaFormateada = ahora.toLocaleDateString('es-VE', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        document.getElementById('pdf-fecha').innerText = fechaFormateada;
+
+                        // Mostrar temporalmente para procesar
+                        pdfElement.style.display = 'block';
+
                         const opciones = {
-                            margin:       [5, 5, 5, 5],
-                            filename:     `Ficha_Emergencia_${data.cedula || 'Afectado'}.pdf`,
+                            margin:       [10, 15, 10, 15],
+                            filename:     `Ficha_Medica_${data.cedula || 'Oficial'}.pdf`,
                             image:        { type: 'jpeg', quality: 0.98 },
-                            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                            html2canvas:  { scale: 2, useCORS: true },
                             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                         };
 
-                        html2pdf().from(elemento).set(opciones).save().then(() => {
-                            btnPdf.style.display = 'block';
+                        html2pdf().from(pdfElement).set(opciones).save().then(() => {
+                            // Ocultar nuevamente tras guardar
+                            pdfElement.style.display = 'none';
                         });
                     });
 
@@ -295,6 +434,7 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
+
 
 
 
