@@ -242,10 +242,11 @@
 
 Se informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.
 
-Esta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunicarse o escríbenos de inmediato a este número* para coordinar la atención, recibir información y mantenerte al tanto.
+Esta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunicarse o escribirnos de inmediato a este número* para coordinar la atención, recibir información y *mantenerse al tanto*.
 
 📍 Ubicación exacta:
 ${enlaceUbicacion}`;
+
 
                         const urlWp = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensajeWp)}`;
                         window.open(urlWp, '_blank');
