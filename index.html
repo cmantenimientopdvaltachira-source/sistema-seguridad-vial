@@ -9,7 +9,6 @@
     <!-- Librería html2pdf para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Estilos optimizados para evitar cortes bruscos en el PDF */
         @media print {
             body {
                 background-color: white !important;
@@ -202,17 +201,14 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
                     
-                    // Configurar Botón de Llamada Telefónica al Familiar (Limpio de guiones)
+                    // Configurar Botón de Llamada Telefónica al Familiar (Corregido sin guiones)
                     const telefonoFamiliar = data.contactoTelefono;
                     const btnLlamar = document.getElementById('btn-llamar');
                     
                     if (telefonoFamiliar) {
-                        const telefonoLimpioLlamada = telefonoFamiliar.replace(/[^\d+]/g, '');
+                        const telefonoLimpioLlamada = telefonoFamiliar.replace(/\D/g, '');
                         btnLlamar.classList.remove('opacity-50', 'pointer-events-none');
-                        btnLlamar.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            window.location.href = `tel:${telefonoLimpioLlamada}`;
-                        });
+                        btnLlamar.href = `tel:${telefonoLimpioLlamada}`;
                     } else {
                         btnLlamar.classList.add('opacity-50', 'pointer-events-none');
                     }
@@ -224,7 +220,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp corregido y ordenado
+                    // Configurar Botón de Alerta WhatsApp
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -248,7 +244,7 @@
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Botón de Descarga PDF optimizado
+                    // Configurar Botón de Descarga PDF
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
                         const elemento = document.getElementById('ficha-printable');
@@ -287,6 +283,7 @@
     </script>
 </body>
 </html>
+
 
 
 
