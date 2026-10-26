@@ -201,14 +201,14 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
                     
-                    // Configurar Botón de Llamada Telefónica al Familiar (Corregido sin guiones)
+                    // Configurar Botón de Llamada Telefónica al Familiar
                     const telefonoFamiliar = data.contactoTelefono;
                     const btnLlamar = document.getElementById('btn-llamar');
                     
                     if (telefonoFamiliar) {
                         const telefonoLimpioLlamada = telefonoFamiliar.replace(/\D/g, '');
                         btnLlamar.classList.remove('opacity-50', 'pointer-events-none');
-                        btnLlamar.href = `tel:${telefonoLimpioLlamada}`;
+                        btnLlamar.setAttribute('href', `tel:${telefonoLimpioLlamada}`);
                     } else {
                         btnLlamar.classList.add('opacity-50', 'pointer-events-none');
                     }
@@ -220,7 +220,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp
+                    // Configurar Botón de Alerta WhatsApp con sirenas seguras (\ud83d\udea8)
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -238,13 +238,13 @@
                             ? `https://maps.google.com/?q=${latitudActual},${longitudActual}`
                             : `Ubicación por confirmar en sitio de emergencia`;
 
-                        const mensajeWp = `🚨 *¡AVISO DE EMERGENCIA VIAL!*\n\nSe ha reportado un incidente vial que involucra al ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\nSe solicita su atención y coordinación urgente. A continuación, la ubicación exacta en el sitio:\n${enlaceUbicacion}`;
+                        const mensajeWp = `\ud83d\udea8 *AVISO URGENTE DE ACCIDENTE VIAL* \ud83d\udea8%0A%0ASe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.%0A%0AEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunícate o escríbenos de inmediato a este número* para coordinar la atención, recibir información y mantenerte al tanto.%0A%0A📍 *Ubicación exacta:*%0A${enlaceUbicacion}`;
 
                         const urlWp = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensajeWp)}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Botón de Descarga PDF
+                    // Configurar Botón de Descarga PDF optimizado
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
                         const elemento = document.getElementById('ficha-printable');
@@ -283,6 +283,7 @@
     </script>
 </body>
 </html>
+
 
 
 
