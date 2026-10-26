@@ -220,7 +220,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp con el mensaje oficial y emojis directos 🚨
+                    // Configurar Botón de Alerta WhatsApp con saltos de línea limpios
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -238,7 +238,14 @@
                             ? `https://maps.google.com/?q=${latitudActual},${longitudActual}`
                             : `Ubicación por confirmar en sitio de emergencia`;
 
-                        const mensajeWp = `🚨 *AVISO URGENTE DE ACCIDENTE VIAL* 🚨%0A%0ASe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.%0A%0AEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunícate o escríbenos de inmediato a este número* para coordinar la atención, recibir información y mantenerte al tanto.%0A%0A📍 *Ubicación exacta:*%0A${enlaceUbicacion}`;
+                        const mensajeWp = `🚨 *AVISO URGENTE DE ACCIDENTE VIAL* 🚨
+
+Se informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.
+
+Esta alerta ha sido emitida desde el lugar de los hechos. Por favor, *comunícate o escríbenos de inmediato a este número* para coordinar la atención, recibir información y mantenerte al tanto.
+
+📍 *Ubicación exacta:*
+${enlaceUbicacion}`;
 
                         const urlWp = `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensajeWp)}`;
                         window.open(urlWp, '_blank');
@@ -283,6 +290,7 @@
     </script>
 </body>
 </html>
+
 
 
 
