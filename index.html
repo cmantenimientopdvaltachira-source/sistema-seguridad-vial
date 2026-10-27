@@ -9,12 +9,15 @@
     <!-- Librería html2pdf para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* Ocultar el contenedor de PDF profesional en la pantalla normal */
+        /* Contenedor PDF oculto fuera de pantalla pero siempre renderizado para evitar blancos */
         #pdf-template {
-            display: none;
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 210mm; /* Ancho fijo tamaño A4 */
+            background: white;
         }
 
-        /* Estilos de impresión */
         @media print {
             body {
                 background-color: white !important;
@@ -131,7 +134,7 @@
     </div>
 
     <!-- PLANTILLA EXCLUSIVA PARA EL PDF PROFESIONAL (FORMULARIO / DOCUMENTO OFICIAL) -->
-    <div id="pdf-template" class="p-5 bg-white text-slate-900 font-sans max-w-[700px] mx-auto">
+    <div id="pdf-template" class="p-8 bg-white text-slate-900 font-sans">
         <!-- Membrete Corporativo Generalizado -->
         <div class="border-b-2 border-red-600 pb-3 mb-4 flex justify-between items-start">
             <div>
@@ -380,7 +383,7 @@ ${enlaceUbicacion}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Generación de PDF Profesional con Fecha Dinámica y ajuste de página único
+                    // Configurar Generación de PDF Profesional con Fecha Dinámica y renderizado estable fuera de pantalla
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
                         const pdfElement = document.getElementById('pdf-template');
@@ -396,21 +399,15 @@ ${enlaceUbicacion}`;
                         });
                         document.getElementById('pdf-fecha').innerText = fechaFormateada;
 
-                        // Mostrar temporalmente para procesar
-                        pdfElement.style.display = 'block';
-
                         const opciones = {
-                            margin:       [8, 10, 8, 10],
+                            margin:       [10, 10, 10, 10],
                             filename:     `Ficha_Medica_${data.cedula || 'Oficial'}.pdf`,
                             image:        { type: 'jpeg', quality: 0.98 },
-                            html2canvas:  { scale: 2, useCORS: true },
+                            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
                             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                         };
 
-                        html2pdf().from(pdfElement).set(opciones).save().then(() => {
-                            // Ocultar nuevamente tras guardar
-                            pdfElement.style.display = 'none';
-                        });
+                        html2pdf().from(pdfElement).set(opciones).save();
                     });
 
                     document.getElementById('loading').classList.add('hidden');
@@ -433,6 +430,7 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
+
 
 
 
