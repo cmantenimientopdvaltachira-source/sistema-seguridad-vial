@@ -6,7 +6,7 @@
     <title>RB-Emergencia Vial - Ficha Médica</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librería jsPDF Nativa (Generación directa sin capturas de canvas) -->
+    <!-- Librería jsPDF Nativa -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
@@ -122,13 +122,13 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con jsPDF nativo -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con Stream Base64 -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const motorizadoId = 'MOT-001';
-        let datosFichaGlobal = null; // Variable segura para almacenar los datos cargados
+        let datosFichaGlobal = null; 
 
         let latitudActual = null;
         let longitudActual = null;
@@ -153,7 +153,7 @@
 
                 if (docSnap.exists() && docSnap.data().estado === "activo") {
                     const data = docSnap.data();
-                    datosFichaGlobal = data; // Almacenamos los datos para validación y exportación
+                    datosFichaGlobal = data; 
                     
                     // 1. Cargar Vista Web
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -247,10 +247,10 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // Configurar Botón de Exportar a PDF con jsPDF Nativo y Validación Estricta
+        // EXPORTACIÓN A PDF CON BYPASS HACKER (STREAM BASE64 DATA URI)
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
-            // VALIDACIÓN: Verificar que existan datos cargados para exportar
+            // Validación estricta de existencia de datos
             if (!datosFichaGlobal) {
                 alert("⚠️ Error: No hay información cargada en el sistema para exportar.");
                 return;
@@ -264,21 +264,20 @@ ${enlaceUbicacion}`;
             });
 
             const data = datosFichaGlobal;
-            let y = 15; // Posición vertical inicial (mm)
+            let y = 15; 
             const margenX = 15;
-            const anchoUtil = 180; // 210mm - 30mm de márgenes
+            const anchoUtil = 180; 
 
-            // 1. MEMBRETE CORPORATIVO OFICIAL
+            // Membrete Oficial
             doc.setFont("helvetica", "bold");
             doc.setFontSize(14);
-            doc.setTextColor(220, 38, 38); // Rojo corporativo
+            doc.setTextColor(220, 38, 38);
             doc.text("RB-EMERGENCIA VIAL", margenX, y);
 
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
             doc.text("ÁMBITO NACIONAL • REPÚBLICA BOLIVARIANA DE VENEZUELA", margenX, y + 5);
 
-            // Sello de Documento Oficial y Fecha a la derecha
             doc.setFontSize(9);
             doc.setTextColor(153, 27, 27);
             doc.text("DOCUMENTO OFICIAL", 195, y, { align: "right" });
@@ -292,16 +291,14 @@ ${enlaceUbicacion}`;
             doc.setTextColor(71, 85, 105);
             doc.text(`Emisión: ${fechaFormateada}`, 195, y + 5, { align: "right" });
 
-            // Línea divisoria del membrete
             y += 10;
             doc.setDrawColor(220, 38, 38);
             doc.setLineWidth(0.5);
             doc.line(margenX, y, 195, y);
 
-            // Función auxiliar para agregar títulos de sección seguros sin superposición
             function agregarTituloSeccion(titulo) {
                 y += 8;
-                doc.setFillColor(241, 245, 249); // Fondo gris claro
+                doc.setFillColor(241, 245, 249);
                 doc.rect(margenX, y, anchoUtil, 6, "F");
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
@@ -310,7 +307,6 @@ ${enlaceUbicacion}`;
                 y += 8;
             }
 
-            // Función auxiliar para agregar filas de datos limpias
             function agregarFila(etiqueta, valor) {
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
@@ -323,7 +319,7 @@ ${enlaceUbicacion}`;
                 y += 6;
             }
 
-            // SECCIÓN 1: DATOS PERSONALES
+            // Secciones estructuradas sin superposición
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
@@ -331,14 +327,12 @@ ${enlaceUbicacion}`;
             agregarFila("Teléfono Personal:", data.telefonoPersonal);
             agregarFila("Dirección:", data.direccion);
 
-            // SECCIÓN 2: INFORMACIÓN MÉDICA
             agregarTituloSeccion("2. ANTECEDENTES Y PERFIL MÉDICO");
             agregarFila("Tipo de Sangre:", data.tipoSangre);
             agregarFila("Alergias Conocidas:", data.alergias);
             agregarFila("Condiciones Crónicas:", data.condicionesMedicas);
             agregarFila("Medicamentos Habituales:", data.medicamentos);
 
-            // SECCIÓN 3: CONTACTO DE EMERGENCIA
             let nombreContacto = data.contactoNombre || "No registrado";
             let parentescoContacto = data.contactoParentesco || "No especificado";
             if (nombreContacto.includes("(")) {
@@ -354,14 +348,12 @@ ${enlaceUbicacion}`;
             agregarFila("Parentesco:", parentescoContacto);
             agregarFila("Teléfono de Contacto:", data.contactoTelefono);
 
-            // SECCIÓN 4: VEHÍCULO Y PÓLIZA
             agregarTituloSeccion("4. DATOS DEL VEHÍCULO Y PÓLIZA");
             agregarFila("Placa:", data.placaVehiculo);
             agregarFila("Tipo de Vehículo:", data.tipoVehiculo);
             agregarFila("Aseguradora / HCM:", data.aseguradora);
             agregarFila("N° de Póliza:", data.nroPoliza);
 
-            // PIE DE PÁGINA OFICIAL
             y += 10;
             doc.setDrawColor(203, 213, 225);
             doc.line(margenX, y, 195, y);
@@ -372,8 +364,36 @@ ${enlaceUbicacion}`;
             doc.text("Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).", 105, y, { align: "center" });
             doc.text("Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.", 105, y + 4, { align: "center" });
 
-            // GUARDAR ARCHIVO PDF
-            doc.save(`Ficha_Medica_${data.cedula || 'Oficial'}.pdf`);
+            // EJECUCIÓN DEL BYPASS DE STREAM EN BASE64
+            try {
+                const pdfDataUri = doc.output('datauristring');
+                const ventanaPdf = window.open();
+                
+                if (ventanaPdf) {
+                    ventanaPdf.document.write(`
+                        <!DOCTYPE html>
+                        <html lang="es">
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Ficha_Medica_${data.cedula || 'Oficial'}.pdf</title>
+                        </head>
+                        <body style="margin:0;padding:0;background:#0f172a;height:100vh;display:flex;flex-direction:column;font-family:sans-serif;">
+                            <div style="background:#dc2626;color:white;padding:12px;text-align:center;font-weight:bold;font-size:14px;">
+                                📄 Ficha Médica Oficial Lista - RB-Emergencia Vial
+                            </div>
+                            <iframe src="${pdfDataUri}" style="width:100%;height:100%;border:none;"></iframe>
+                        </body>
+                        </html>
+                    `);
+                } else {
+                    // Fallback directo por si el navegador bloquea popups del WebView
+                    window.location.href = pdfDataUri;
+                }
+            } catch (error) {
+                console.error("Error crítico en stream del PDF:", error);
+                // Fallback final a descarga estándar
+                doc.save(`Ficha_Medica_${data.cedula || 'Oficial'}.pdf`);
+            }
         });
 
         function mostrarError() {
