@@ -8,22 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Librería html2pdf para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        /* Contenedor PDF oculto fuera de pantalla pero siempre renderizado para evitar blancos */
-        #pdf-template {
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 210mm; /* Ancho fijo tamaño A4 */
-            background: white;
-        }
-
-        @media print {
-            body {
-                background-color: white !important;
-            }
-        }
-    </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
@@ -133,118 +117,6 @@
         </div>
     </div>
 
-    <!-- PLANTILLA EXCLUSIVA PARA EL PDF PROFESIONAL (FORMULARIO / DOCUMENTO OFICIAL) -->
-    <div id="pdf-template" class="p-8 bg-white text-slate-900 font-sans">
-        <!-- Membrete Corporativo Generalizado -->
-        <div class="border-b-2 border-red-600 pb-3 mb-4 flex justify-between items-start">
-            <div>
-                <h1 class="text-lg font-black text-red-600 tracking-wider uppercase">RB-Emergencia Vial</h1>
-                <p class="text-[10px] text-slate-500 font-bold uppercase">Ámbito Nacional &bull; República Bolivariana de Venezuela</p>
-                <h2 class="text-base font-bold text-slate-900 mt-1">FICHA MÉDICA DE ATENCIÓN PRIORITARIA</h2>
-            </div>
-            <div class="text-right">
-                <span class="inline-block bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded border border-red-300">DOCUMENTO OFICIAL</span>
-                <p class="text-[10px] text-slate-500 mt-1"><strong>Emisión:</strong> <span id="pdf-fecha" class="font-bold text-slate-800">--</span></p>
-            </div>
-        </div>
-
-        <!-- Sección 1: Identificación y Datos Personales -->
-        <div class="mb-3">
-            <h3 class="text-[11px] font-black uppercase tracking-wider bg-slate-100 p-1.5 border-l-4 border-slate-700 text-slate-700 mb-2">1. Datos Personales del Ciudadano</h3>
-            <table class="w-full text-xs text-left border-collapse">
-                <tbody>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600 w-1/3">Nombre Completo:</td>
-                        <td id="pdf-nombre" class="py-1 font-bold text-slate-900 text-xs">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Cédula de Identidad:</td>
-                        <td id="pdf-cedula" class="py-1 text-slate-800 font-semibold">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Fecha de Nacimiento:</td>
-                        <td id="pdf-fecha-nac" class="py-1 text-slate-800">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Teléfono Personal:</td>
-                        <td id="pdf-telefono" class="py-1 text-slate-800">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Dirección de Domicilio:</td>
-                        <td id="pdf-direccion" class="py-1 text-slate-800">--</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Sección 2: Perfil Médico Clínico -->
-        <div class="mb-3">
-            <h3 class="text-[11px] font-black uppercase tracking-wider bg-red-50 p-1.5 border-l-4 border-red-600 text-red-700 mb-2">2. Antecedentes y Perfil Médico</h3>
-            <div class="grid grid-cols-2 gap-3 mb-2">
-                <div class="border border-red-200 bg-red-50/50 p-2 rounded">
-                    <span class="block text-[9px] font-bold text-red-600 uppercase">Grupo Sanguíneo y RH</span>
-                    <span id="pdf-sangre" class="text-base font-black text-red-700">--</span>
-                </div>
-                <div class="border border-red-200 bg-red-50/50 p-2 rounded">
-                    <span class="block text-[9px] font-bold text-red-600 uppercase">Alergias Conocidas</span>
-                    <span id="pdf-alergias" class="text-xs font-bold text-slate-800">--</span>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div class="border border-slate-200 p-2 rounded bg-slate-50">
-                    <span class="block text-[9px] font-bold text-slate-600 uppercase">Condiciones Crónicas</span>
-                    <span id="pdf-condiciones" class="text-xs font-semibold text-slate-800">--</span>
-                </div>
-                <div class="border border-slate-200 p-2 rounded bg-slate-50">
-                    <span class="block text-[9px] font-bold text-slate-600 uppercase">Medicamentos Habituales</span>
-                    <span id="pdf-medicamentos" class="text-xs font-semibold text-slate-800">--</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Sección 3: Contacto Familiar de Emergencia -->
-        <div class="mb-3">
-            <h3 class="text-[11px] font-black uppercase tracking-wider bg-slate-100 p-1.5 border-l-4 border-slate-700 text-slate-700 mb-2">3. Contacto de Emergencia Notificado</h3>
-            <table class="w-full text-xs border-collapse">
-                <tbody>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600 w-1/3">Nombre del Contacto:</td>
-                        <td id="pdf-contacto-nombre" class="py-1 font-bold text-slate-900">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Parentesco:</td>
-                        <td id="pdf-contacto-parentesco" class="py-1 text-slate-800">--</td>
-                    </tr>
-                    <tr class="border-b border-slate-200">
-                        <td class="py-1 font-bold text-slate-600">Teléfono de Contacto:</td>
-                        <td id="pdf-contacto-telefono" class="py-1 text-slate-800 font-bold text-xs">--</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Sección 4: Registro del Vehículo -->
-        <div class="mb-4">
-            <h3 class="text-[11px] font-black uppercase tracking-wider bg-slate-100 p-1.5 border-l-4 border-slate-700 text-slate-700 mb-2">4. Datos del Vehículo y Póliza</h3>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                    <p class="py-0.5"><strong>Placa:</strong> <span id="pdf-placa">--</span></p>
-                    <p class="py-0.5"><strong>Tipo de Vehículo:</strong> <span id="pdf-vehiculo">--</span></p>
-                </div>
-                <div>
-                    <p class="py-0.5"><strong>Aseguradora / HCM:</strong> <span id="pdf-aseguradora">--</span></p>
-                    <p class="py-0.5"><strong>N° de Póliza:</strong> <span id="pdf-poliza">--</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pie de página Oficial -->
-        <div class="mt-4 pt-3 border-t border-slate-300 text-center text-[9px] text-slate-500">
-            <p>Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).</p>
-            <p class="mt-0.5">Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.</p>
-        </div>
-    </div>
-
     <!-- Pie de página Web -->
     <footer class="text-center text-xs text-slate-400 py-4">
         RB-Emergencia Vial &bull; Ámbito Nacional
@@ -311,27 +183,6 @@
                     document.getElementById('tipo-vehiculo').innerText = data.tipoVehiculo || "No especificado";
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
-                    
-                    // 2. Cargar Datos en la Plantilla de PDF Oficial
-                    document.getElementById('pdf-nombre').innerText = data.nombreCompleto || "No registrado";
-                    document.getElementById('pdf-cedula').innerText = data.cedula || "No registrada";
-                    document.getElementById('pdf-fecha-nac').innerText = data.fechaNacimiento || "No registrada";
-                    document.getElementById('pdf-telefono').innerText = data.telefonoPersonal || "No registrado";
-                    document.getElementById('pdf-direccion').innerText = data.direccion || "No registrada";
-
-                    document.getElementById('pdf-sangre').innerText = data.tipoSangre || "N/A";
-                    document.getElementById('pdf-alergias').innerText = data.alergias || "Ninguna";
-                    document.getElementById('pdf-condiciones').innerText = data.condicionesMedicas || "Ninguna";
-                    document.getElementById('pdf-medicamentos').innerText = data.medicamentos || "Ninguno";
-
-                    document.getElementById('pdf-contacto-nombre').innerText = nombreContacto;
-                    document.getElementById('pdf-contacto-parentesco').innerText = parentescoContacto || "No especificado";
-                    document.getElementById('pdf-contacto-telefono').innerText = data.contactoTelefono || "No registrado";
-
-                    document.getElementById('pdf-placa').innerText = data.placaVehiculo || "Sin placa";
-                    document.getElementById('pdf-vehiculo').innerText = data.tipoVehiculo || "No especificado";
-                    document.getElementById('pdf-aseguradora').innerText = data.aseguradora || "Particular";
-                    document.getElementById('pdf-poliza').innerText = data.nroPoliza || "N/A";
 
                     // Configurar Botón de Llamada al Familiar
                     const telefonoFamiliar = data.contactoTelefono;
@@ -352,7 +203,7 @@
                         window.location.href = 'tel:171';
                     });
 
-                    // Configurar Botón de Alerta WhatsApp EXACTO
+                    // Configurar Botón de Alerta WhatsApp
                     const btnWhatsapp = document.getElementById('btn-whatsapp');
                     btnWhatsapp.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -383,12 +234,10 @@ ${enlaceUbicacion}`;
                         window.open(urlWp, '_blank');
                     });
 
-                    // Configurar Generación de PDF Profesional con Fecha Dinámica y renderizado estable fuera de pantalla
+                    // GENERACIÓN DE PDF MEDIANTE INYECCIÓN DINÁMICA SEGURA AL VUELO
                     const btnPdf = document.getElementById('btn-pdf');
                     btnPdf.addEventListener('click', () => {
-                        const pdfElement = document.getElementById('pdf-template');
-                        
-                        // Asignar fecha y hora actual exacta al documento
+                        // 1. Obtener fecha y hora exacta actual
                         const ahora = new Date();
                         const fechaFormateada = ahora.toLocaleDateString('es-VE', {
                             day: '2-digit',
@@ -397,7 +246,104 @@ ${enlaceUbicacion}`;
                             hour: '2-digit',
                             minute: '2-digit'
                         });
-                        document.getElementById('pdf-fecha').innerText = fechaFormateada;
+
+                        // 2. Crear elemento contenedor en memoria con dimensiones visibles reales
+                        const pdfElement = document.createElement('div');
+                        pdfElement.style.position = 'fixed';
+                        pdfElement.style.left = '0';
+                        pdfElement.style.top = '0';
+                        pdfElement.style.zIndex = '99999';
+                        pdfElement.style.width = '210mm';
+                        pdfElement.style.backgroundColor = '#ffffff';
+                        pdfElement.style.padding = '32px';
+                        pdfElement.style.boxSizing = 'border-box';
+                        pdfElement.style.opacity = '0.01'; // Casi transparente pero renderizado activamente por el motor móvil
+                        pdfElement.style.pointerEvents = 'none';
+
+                        // 3. Estructura corporativa oficial limpia con los datos y el membrete correcto
+                        pdfElement.innerHTML = `
+                            <div style="border-bottom: 2px solid #dc2626; padding-bottom: 10px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h1 style="font-size: 18px; font-weight: 900; color: #dc2626; text-transform: uppercase; margin: 0;">RB-Emergencia Vial</h1>
+                                    <p style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase; margin: 2px 0 0 0;">Ámbito Nacional &bull; República Bolivariana de Venezuela</p>
+                                    <h2 style="font-size: 14px; font-weight: bold; color: #0f172a; margin: 4px 0 0 0;">FICHA MÉDICA DE ATENCIÓN PRIORITARIA</h2>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span style="display: inline-block; background-color: #fee2e2; color: #991b1b; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; border: 1px solid #fca5a5;">DOCUMENTO OFICIAL</span>
+                                    <p style="font-size: 10px; color: #64748b; margin: 4px 0 0 0;"><strong>Emisión:</strong> <span style="font-weight: bold; color: #1e293b;">${fechaFormateada}</span></p>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <h3 style="font-size: 11px; font-weight: 900; text-transform: uppercase; background-color: #f1f5f9; padding: 6px; border-left: 4px solid #334155; color: #334155; margin-bottom: 6px;">1. Datos Personales del Ciudadano</h3>
+                                <table style="width: 100%; font-size: 12px; text-align: left; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569; width: 33%;">Nombre Completo:</td><td style="padding: 4px 0; font-weight: bold; color: #0f172a;">${data.nombreCompleto || "No registrado"}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Cédula de Identidad:</td><td style="padding: 4px 0; color: #1e293b; font-weight: 600;">${data.cedula || "No registrada"}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Fecha de Nacimiento:</td><td style="padding: 4px 0; color: #1e293b;">${data.fechaNacimiento || "No registrada"}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Teléfono Personal:</td><td style="padding: 4px 0; color: #1e293b;">${data.telefonoPersonal || "No registrado"}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Dirección de Domicilio:</td><td style="padding: 4px 0; color: #1e293b;">${data.direccion || "No registrada"}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <h3 style="font-size: 11px; font-weight: 900; text-transform: uppercase; background-color: #fef2f2; padding: 6px; border-left: 4px solid #dc2626; color: #b91c1c; margin-bottom: 6px;">2. Antecedentes y Perfil Médico</h3>
+                                <div style="display: flex; gap: 10px; margin-bottom: 6px;">
+                                    <div style="flex: 1; border: 1px solid #fecaca; background-color: #fff5f5; padding: 6px; border-radius: 4px;">
+                                        <span style="display: block; font-size: 9px; font-weight: bold; color: #dc2626; text-transform: uppercase;">Grupo Sanguíneo y RH</span>
+                                        <span style="font-size: 15px; font-weight: 900; color: #991b1b;">${data.tipoSangre || "N/A"}</span>
+                                    </div>
+                                    <div style="flex: 1; border: 1px solid #fecaca; background-color: #fff5f5; padding: 6px; border-radius: 4px;">
+                                        <span style="display: block; font-size: 9px; font-weight: bold; color: #dc2626; text-transform: uppercase;">Alergias Conocidas</span>
+                                        <span style="font-size: 11px; font-weight: bold; color: #1e293b;">${data.alergias || "Ninguna"}</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <div style="flex: 1; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px; background-color: #f8fafc;">
+                                        <span style="display: block; font-size: 9px; font-weight: bold; color: #475569; text-transform: uppercase;">Condiciones Crónicas</span>
+                                        <span style="font-size: 11px; font-weight: 600; color: #1e293b;">${data.condicionesMedicas || "Ninguna"}</span>
+                                    </div>
+                                    <div style="flex: 1; border: 1px solid #e2e8f0; padding: 6px; border-radius: 4px; background-color: #f8fafc;">
+                                        <span style="display: block; font-size: 9px; font-weight: bold; color: #475569; text-transform: uppercase;">Medicamentos Habituales</span>
+                                        <span style="font-size: 11px; font-weight: 600; color: #1e293b;">${data.medicamentos || "Ninguno"}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <h3 style="font-size: 11px; font-weight: 900; text-transform: uppercase; background-color: #f1f5f9; padding: 6px; border-left: 4px solid #334155; color: #334155; margin-bottom: 6px;">3. Contacto de Emergencia Notificado</h3>
+                                <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569; width: 33%;">Nombre del Contacto:</td><td style="padding: 4px 0; font-weight: bold; color: #0f172a;">${nombreContacto}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Parentesco:</td><td style="padding: 4px 0; color: #1e293b;">${parentescoContacto || "No especificado"}</td></tr>
+                                        <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 4px 0; font-weight: bold; color: #475569;">Teléfono de Contacto:</td><td style="padding: 4px 0; color: #0f172a; font-weight: bold;">${data.contactoTelefono || "No registrado"}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="margin-bottom: 14px;">
+                                <h3 style="font-size: 11px; font-weight: 900; text-transform: uppercase; background-color: #f1f5f9; padding: 6px; border-left: 4px solid #334155; color: #334155; margin-bottom: 6px;">4. Datos del Vehículo y Póliza</h3>
+                                <div style="display: flex; gap: 12px; font-size: 12px;">
+                                    <div style="flex: 1;">
+                                        <p style="margin: 2px 0;"><strong>Placa:</strong> ${data.placaVehiculo || "Sin placa"}</p>
+                                        <p style="margin: 2px 0;"><strong>Tipo de Vehículo:</strong> ${data.tipoVehiculo || "No especificado"}</p>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <p style="margin: 2px 0;"><strong>Aseguradora / HCM:</strong> ${data.aseguradora || "Particular"}</p>
+                                        <p style="margin: 2px 0;"><strong>N° de Póliza:</strong> ${data.nroPoliza || "N/A"}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 18px; padding-top: 10px; border-top: 1px solid #cbd5e1; text-align: center; font-size: 9px; color: #64748b;">
+                                <p style="margin: 0;">Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).</p>
+                                <p style="margin: 2px 0 0 0;">Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.</p>
+                            </div>
+                        `;
+
+                        // 4. Adjuntar al DOM visible para forzar el renderizado del motor móvil
+                        document.body.appendChild(pdfElement);
 
                         const opciones = {
                             margin:       [10, 10, 10, 10],
@@ -407,7 +353,10 @@ ${enlaceUbicacion}`;
                             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                         };
 
-                        html2pdf().from(pdfElement).set(opciones).save();
+                        // 5. Capturar, guardar y limpiar inmediatamente del DOM
+                        html2pdf().from(pdfElement).set(opciones).save().then(() => {
+                            document.body.removeChild(pdfElement);
+                        });
                     });
 
                     document.getElementById('loading').classList.add('hidden');
@@ -430,6 +379,7 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
+
 
 
 
