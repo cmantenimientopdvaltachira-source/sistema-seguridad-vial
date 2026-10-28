@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con Alineación de Valores Blindada -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con alineación corregida para el vehículo -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON BLINDAJE DE ALINEACIÓN DE VALORES EXACTA
+        // EXPORTACIÓN A PDF CON ALINEACIÓN PERFECTAMENTE UNIFICADA
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 60; // Coordenada X fija e inalterable para todos los valores
+            const columnaValorX = 60; // Coordenada X fija para todos los valores del documento
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -314,23 +314,20 @@ ${enlaceUbicacion}`;
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
-                // Forzar estrictamente fuente normal y tamaño 9 para el valor (evita herencias de tamaño)
+                // Configurar fuente estrictamente normal y tamaño 9 para el valor
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
                 const valorTexto = String(valor || "No registrado");
-                const lineasValor = doc.splitTextToSize(valorTexto, 130); 
                 
-                // Imprimir cada línea forzando explícitamente la coordenada X inicial (columnaValorX)
-                for (let i = 0; i < lineasValor.length; i++) {
-                    doc.text(lineasValor[i], columnaValorX, y + (i * 5));
-                }
+                // Impresión directa a la coordenada X fija sin justificados automáticos quealteren el espaciado
+                doc.text(valorTexto, columnaValorX, y);
                 
-                y += (lineasValor.length * 6) + 2;
+                y += 7; // Salto vertical uniforme entre filas
             }
 
-            // Secciones estructuradas con alineación blindada
+            // Secciones estructuradas con estética simétrica impecable
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
