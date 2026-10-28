@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con Stream Base64 -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con Alineación Estética Perfecta -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,10 +247,9 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON BYPASS HACKER (STREAM BASE64 DATA URI)
+        // EXPORTACIÓN A PDF CON ESTÉTICA Y ALINEACIÓN PERFECTA DE COLUMNAS
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
-            // Validación estricta de existencia de datos
             if (!datosFichaGlobal) {
                 alert("⚠️ Error: No hay información cargada en el sistema para exportar.");
                 return;
@@ -267,6 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
+            const columnaValorX = 55; // Posición fija estricta para alinear todos los valores perfectamente
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -309,17 +309,24 @@ ${enlaceUbicacion}`;
 
             function agregarFila(etiqueta, valor) {
                 doc.setFont("helvetica", "bold");
-                doc.setFontSize(9);
+                doc.setFontSize(9); // Tamaño estandarizado unificado para etiquetas
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
                 doc.setFont("helvetica", "normal");
+                doc.setFontSize(9); // Tamaño estandarizado unificado idéntico para los valores (evita letras grandes sueltas)
                 doc.setTextColor(15, 23, 42);
-                doc.text(String(valor || "No registrado"), margenX + 45, y);
-                y += 6;
+                
+                // Control inteligente de textos largos (como direcciones o vehículos) con salto de línea automático
+                const valorTexto = String(valor || "No registrado");
+                const lineasValor = doc.splitTextToSize(valorTexto, 140); // Ancho máximo antes de envolver
+                doc.text(lineasValor, columnaValorX, y);
+                
+                // Ajustar el salto vertical según las líneas que ocupe el texto
+                y += (lineasValor.length * 5) + 1;
             }
 
-            // Secciones estructuradas sin superposición
+            // Secciones estructuradas con estética simétrica
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
@@ -354,7 +361,7 @@ ${enlaceUbicacion}`;
             agregarFila("Aseguradora / HCM:", data.aseguradora);
             agregarFila("N° de Póliza:", data.nroPoliza);
 
-            y += 10;
+            y += 6;
             doc.setDrawColor(203, 213, 225);
             doc.line(margenX, y, 195, y);
             y += 5;
@@ -386,12 +393,10 @@ ${enlaceUbicacion}`;
                         </html>
                     `);
                 } else {
-                    // Fallback directo por si el navegador bloquea popups del WebView
                     window.location.href = pdfDataUri;
                 }
             } catch (error) {
                 console.error("Error crítico en stream del PDF:", error);
-                // Fallback final a descarga estándar
                 doc.save(`Ficha_Medica_${data.cedula || 'Oficial'}.pdf`);
             }
         });
@@ -405,4 +410,4 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
-
+                   
