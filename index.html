@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con tipografía blindada -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con normalización estricta -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON BLINDAJE TIPOGRÁFICO ABSOLUTO
+        // EXPORTACIÓN A PDF CON NORMALIZACIÓN TIPOGRÁFICA Y ESPACIADO BLINDADO
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 60; // Posición horizontal fija y estricta para todos los valores
+            const columnaValorX = 60; // Posición horizontal fija idéntica para todo el documento
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -314,15 +314,17 @@ ${enlaceUbicacion}`;
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
-                // 2. Renderizado de Valor (Normal, Tamaño 9 estricto, Color Tinta Plana)
+                // 2. Renderizado de Valor con Normalización Quirúrgica
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
-                // Normalización estricta de espacios para evitar anomalías tipográficas en cadenas largas
-                const valorTexto = String(valor || "No registrado").replace(/\s+/g, ' ').trim();
+                // Corrección clave: Limpiamos espacios múltiples y forzamos un espaciado estándar unitario
+                let valorTexto = String(valor || "No registrado").replace(/\s+/g, ' ').trim();
                 
-                doc.text(valorTexto, columnaValorX, y);
+                // Si la cadena corresponde al tipo de vehículo u otra cadena que sufra de expansión de tracking, 
+                // garantizamos que se pinte de forma compacta y unificada con espacios simples.
+                doc.text(valorTexto, columnaValorX, y, { charSpace: 0 });
                 
                 y += 7; // Salto vertical uniforme entre filas
             }
