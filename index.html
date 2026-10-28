@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con Alineación Estética Perfecta -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF optimizada para móviles -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON ESTÉTICA Y ALINEACIÓN PERFECTA DE COLUMNAS
+        // EXPORTACIÓN A PDF CON ENLACE DIRECTO SEGURO (EVITA ABOUT:BLANK EN MÓVILES)
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 55; // Posición fija estricta para alinear todos los valores perfectamente
+            const columnaValorX = 55; // Alineación perfecta de columnas
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -309,20 +309,18 @@ ${enlaceUbicacion}`;
 
             function agregarFila(etiqueta, valor) {
                 doc.setFont("helvetica", "bold");
-                doc.setFontSize(9); // Tamaño estandarizado unificado para etiquetas
+                doc.setFontSize(9);
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(9); // Tamaño estandarizado unificado idéntico para los valores (evita letras grandes sueltas)
+                doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
-                // Control inteligente de textos largos (como direcciones o vehículos) con salto de línea automático
                 const valorTexto = String(valor || "No registrado");
-                const lineasValor = doc.splitTextToSize(valorTexto, 140); // Ancho máximo antes de envolver
+                const lineasValor = doc.splitTextToSize(valorTexto, 140); 
                 doc.text(lineasValor, columnaValorX, y);
                 
-                // Ajustar el salto vertical según las líneas que ocupe el texto
                 y += (lineasValor.length * 5) + 1;
             }
 
@@ -371,32 +369,22 @@ ${enlaceUbicacion}`;
             doc.text("Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).", 105, y, { align: "center" });
             doc.text("Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.", 105, y + 4, { align: "center" });
 
-            // EJECUCIÓN DEL BYPASS DE STREAM EN BASE64
+            // APERTURA Y DESCARGA DIRECTA POR ENLACE NATIVO (ELIMINA EL ABOUT:BLANK)
             try {
                 const pdfDataUri = doc.output('datauristring');
-                const ventanaPdf = window.open();
                 
-                if (ventanaPdf) {
-                    ventanaPdf.document.write(`
-                        <!DOCTYPE html>
-                        <html lang="es">
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>Ficha_Medica_${data.cedula || 'Oficial'}.pdf</title>
-                        </head>
-                        <body style="margin:0;padding:0;background:#0f172a;height:100vh;display:flex;flex-direction:column;font-family:sans-serif;">
-                            <div style="background:#dc2626;color:white;padding:12px;text-align:center;font-weight:bold;font-size:14px;">
-                                📄 Ficha Médica Oficial Lista - RB-Emergencia Vial
-                            </div>
-                            <iframe src="${pdfDataUri}" style="width:100%;height:100%;border:none;"></iframe>
-                        </body>
-                        </html>
-                    `);
-                } else {
-                    window.location.href = pdfDataUri;
-                }
+                // Crear un elemento <a> invisible para forzar la apertura/descarga limpia en móviles
+                const enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = pdfDataUri;
+                enlaceDescarga.download = `Ficha_Medica_${data.cedula || 'Oficial'}.pdf`;
+                enlaceDescarga.target = '_blank';
+                
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                document.body.removeChild(enlaceDescarga);
+
             } catch (error) {
-                console.error("Error crítico en stream del PDF:", error);
+                console.error("Error crítico en descarga directa:", error);
                 doc.save(`Ficha_Medica_${data.cedula || 'Oficial'}.pdf`);
             }
         });
@@ -410,4 +398,3 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
-                   
