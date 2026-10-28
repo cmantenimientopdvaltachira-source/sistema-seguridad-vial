@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF optimizada para móviles -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con Estética Perfecta -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON ENLACE DIRECTO SEGURO (EVITA ABOUT:BLANK EN MÓVILES)
+        // EXPORTACIÓN A PDF CON MAQUETACIÓN ESTÉTICA PULIDA (MÁRGENES Y ESPACIADOS PERFECTOS)
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 55; // Alineación perfecta de columnas
+            const columnaValorX = 60; // Columna de valores alineada y separada para evitar choques
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -297,14 +297,14 @@ ${enlaceUbicacion}`;
             doc.line(margenX, y, 195, y);
 
             function agregarTituloSeccion(titulo) {
-                y += 8;
+                y += 9; // Espacio superior antes de la barra gris
                 doc.setFillColor(241, 245, 249);
                 doc.rect(margenX, y, anchoUtil, 6, "F");
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 doc.setTextColor(51, 65, 85);
-                doc.text(titulo, margenX + 2, y + 4);
-                y += 8;
+                doc.text(titulo, margenX + 3, y + 4);
+                y += 9; // Margen de respiro perfecto para que el primer texto NO quede pegado al borde azul/gris
             }
 
             function agregarFila(etiqueta, valor) {
@@ -314,17 +314,18 @@ ${enlaceUbicacion}`;
                 doc.text(etiqueta, margenX, y);
 
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(9);
+                doc.setFontSize(9); // Tamaño de letra 100% unificado para todos los valores (incluyendo tipo de vehículo)
                 doc.setTextColor(15, 23, 42);
                 
                 const valorTexto = String(valor || "No registrado");
-                const lineasValor = doc.splitTextToSize(valorTexto, 140); 
+                const lineasValor = doc.splitTextToSize(valorTexto, 130); // Ancho seguro para evitar desbordes
                 doc.text(lineasValor, columnaValorX, y);
                 
-                y += (lineasValor.length * 5) + 1;
+                // Interlineado limpio y uniforme
+                y += (lineasValor.length * 6) + 2;
             }
 
-            // Secciones estructuradas con estética simétrica
+            // Secciones estructuradas con estética simétrica impecable
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
@@ -369,11 +370,10 @@ ${enlaceUbicacion}`;
             doc.text("Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).", 105, y, { align: "center" });
             doc.text("Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.", 105, y + 4, { align: "center" });
 
-            // APERTURA Y DESCARGA DIRECTA POR ENLACE NATIVO (ELIMINA EL ABOUT:BLANK)
+            // DESCARGA DIRECTA SEGURA
             try {
                 const pdfDataUri = doc.output('datauristring');
                 
-                // Crear un elemento <a> invisible para forzar la apertura/descarga limpia en móviles
                 const enlaceDescarga = document.createElement('a');
                 enlaceDescarga.href = pdfDataUri;
                 enlaceDescarga.download = `Ficha_Medica_${data.cedula || 'Oficial'}.pdf`;
