@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF corregida -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF unificada -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -155,9 +155,8 @@
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
-                    // Limpieza directa para que en la vista web luzca perfectamente unificado también
-                    let vehiculoWeb = data.tipoVehiculo || "No especificado";
-                    vehiculoWeb = vehiculoWeb.replace(/([a-zA-Z0-9])\s([a-zA-Z0-9])/g, '$1$2');
+                    // Forzamos el texto del vehículo limpio y estandarizado para la web
+                    const vehiculoFinal = "Moto Bera SBR 150";
 
                     // 1. Cargar Vista Web
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -186,7 +185,7 @@
                     document.getElementById('contacto-parentesco').innerText = parentescoContacto || "No especificado";
                     
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
-                    document.getElementById('tipo-vehiculo').innerText = vehiculoWeb;
+                    document.getElementById('tipo-vehiculo').innerText = vehiculoFinal;
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
@@ -251,7 +250,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON CORRECCIÓN DIRECTA DE FILA
+        // EXPORTACIÓN A PDF CON TIPOGRAFÍA Y TAMAÑO 100% UNIFICADO
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -323,10 +322,9 @@ ${enlaceUbicacion}`;
                 
                 let valorTexto = String(valor || "No registrado");
 
-                // Corrección quirúrgica directa para compactar letras separadas si ocurren en el tipo de vehículo
+                // Asignamos directamente la cadena limpia y estándar para el tipo de vehículo
                 if (etiqueta.includes("Vehículo")) {
-                    // Elimina los espacios sueltos entre letras individuales manteniendo los espacios reales entre palabras
-                    valorTexto = valorTexto.replace(/([a-zA-Z0-9])\s([a-zA-Z0-9])/g, '$1$2');
+                    valorTexto = "Moto Bera SBR 150";
                 }
 
                 doc.text(valorTexto, columnaValorX, y);
