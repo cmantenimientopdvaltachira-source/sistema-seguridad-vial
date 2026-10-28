@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con alineación corregida para el vehículo -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con tipografía blindada -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON ALINEACIÓN PERFECTAMENTE UNIFICADA
+        // EXPORTACIÓN A PDF CON BLINDAJE TIPOGRÁFICO ABSOLUTO
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 60; // Coordenada X fija para todos los valores del documento
+            const columnaValorX = 60; // Posición horizontal fija y estricta para todos los valores
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -308,20 +308,20 @@ ${enlaceUbicacion}`;
             }
 
             function agregarFila(etiqueta, valor) {
-                // Configurar fuente para la etiqueta
+                // 1. Renderizado de Etiqueta (Negrita, Tamaño 9, Color Gris Oscuro)
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
-                // Configurar fuente estrictamente normal y tamaño 9 para el valor
+                // 2. Renderizado de Valor (Normal, Tamaño 9 estricto, Color Tinta Plana)
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
-                const valorTexto = String(valor || "No registrado");
+                // Normalización estricta de espacios para evitar anomalías tipográficas en cadenas largas
+                const valorTexto = String(valor || "No registrado").replace(/\s+/g, ' ').trim();
                 
-                // Impresión directa a la coordenada X fija sin justificados automáticos quealteren el espaciado
                 doc.text(valorTexto, columnaValorX, y);
                 
                 y += 7; // Salto vertical uniforme entre filas
