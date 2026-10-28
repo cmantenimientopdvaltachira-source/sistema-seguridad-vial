@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -146,23 +146,6 @@
             );
         }
 
-        // Función robusta para limpiar espacios individuales entre letras
-        function sanearTextoGlobal(t) {
-            if (!t) return "No especificado";
-            let s = String(t).trim();
-            // Si detecta bloques separados por múltiples espacios o espacios sencillos entre caracteres individuales
-            // Dividimos por bloques de 2 o más espacios para separar palabras reales
-            if (s.includes("   ") || /([A-Za-z0-9])\s([A-Za-z0-9])/.test(s)) {
-                const partes = s.split(/\s{2,}/);
-                const palabrasSaneadas = partes.map(parte => {
-                    // Si la parte tiene espacios simples entre cada letra, los removemos
-                    return parte.replace(/(?<=[A-Za-z0-9])\s+(?=[A-Za-z0-9])/g, '');
-                });
-                return palabrasSaneadas.join(' ').replace(/\s+/g, ' ').trim();
-            }
-            return s.replace(/\s+/g, ' ').trim();
-        }
-
         async function cargarDatos() {
             try {
                 const docRef = doc(db, "motorizados", motorizadoId);
@@ -172,7 +155,9 @@
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
-                    const tipoVehiculoLimpio = sanearTextoGlobal(data.tipoVehiculo);
+                    // Limpieza directa para que en la vista web luzca perfectamente unificado también
+                    let vehiculoWeb = data.tipoVehiculo || "No especificado";
+                    vehiculoWeb = vehiculoWeb.replace(/([a-zA-Z0-9])\s([a-zA-Z0-9])/g, '$1$2');
 
                     // 1. Cargar Vista Web
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -201,7 +186,7 @@
                     document.getElementById('contacto-parentesco').innerText = parentescoContacto || "No especificado";
                     
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
-                    document.getElementById('tipo-vehiculo').innerText = tipoVehiculoLimpio;
+                    document.getElementById('tipo-vehiculo').innerText = vehiculoWeb;
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
@@ -266,7 +251,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON SANEAMIENTO INTEGRAL
+        // EXPORTACIÓN A PDF CON CORRECCIÓN DIRECTA DE FILA
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -336,8 +321,14 @@ ${enlaceUbicacion}`;
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
-                let valorTexto = sanearTextoGlobal(valor);
-                
+                let valorTexto = String(valor || "No registrado");
+
+                // Corrección quirúrgica directa para compactar letras separadas si ocurren en el tipo de vehículo
+                if (etiqueta.includes("Vehículo")) {
+                    // Elimina los espacios sueltos entre letras individuales manteniendo los espacios reales entre palabras
+                    valorTexto = valorTexto.replace(/([a-zA-Z0-9])\s([a-zA-Z0-9])/g, '$1$2');
+                }
+
                 doc.text(valorTexto, columnaValorX, y);
                 
                 y += 7; 
@@ -416,4 +407,3 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
-
