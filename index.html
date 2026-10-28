@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con sanemiento de datos -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF corregida -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -146,6 +146,23 @@
             );
         }
 
+        // Función robusta para limpiar espacios individuales entre letras
+        function sanearTextoGlobal(t) {
+            if (!t) return "No especificado";
+            let s = String(t).trim();
+            // Si detecta bloques separados por múltiples espacios o espacios sencillos entre caracteres individuales
+            // Dividimos por bloques de 2 o más espacios para separar palabras reales
+            if (s.includes("   ") || /([A-Za-z0-9])\s([A-Za-z0-9])/.test(s)) {
+                const partes = s.split(/\s{2,}/);
+                const palabrasSaneadas = partes.map(parte => {
+                    // Si la parte tiene espacios simples entre cada letra, los removemos
+                    return parte.replace(/(?<=[A-Za-z0-9])\s+(?=[A-Za-z0-9])/g, '');
+                });
+                return palabrasSaneadas.join(' ').replace(/\s+/g, ' ').trim();
+            }
+            return s.replace(/\s+/g, ' ').trim();
+        }
+
         async function cargarDatos() {
             try {
                 const docRef = doc(db, "motorizados", motorizadoId);
@@ -155,19 +172,7 @@
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
-                    // Función local para sanear visualmente el vehículo en web si viniera espaciado
-                    const sanearTexto = (t) => {
-                        if (!t) return "No especificado";
-                        let s = String(t);
-                        let ant;
-                        do {
-                            ant = s;
-                            s = s.replace(/\b([A-Za-z0-9])\s([A-Za-z0-9])\b/g, '$1$2');
-                        } while (s !== ant);
-                        return s.replace(/\s+/g, ' ').trim();
-                    };
-
-                    const tipoVehiculoLimpio = sanearTexto(data.tipoVehiculo);
+                    const tipoVehiculoLimpio = sanearTextoGlobal(data.tipoVehiculo);
 
                     // 1. Cargar Vista Web
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -261,7 +266,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON SANEAMIENTO QUIRÚRGICO DE DATOS ESPACIADOS
+        // EXPORTACIÓN A PDF CON SANEAMIENTO INTEGRAL
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -280,7 +285,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 60; // Posición horizontal idéntica y estricta para todo el documento
+            const columnaValorX = 60; 
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -321,38 +326,24 @@ ${enlaceUbicacion}`;
                 y += 9; 
             }
 
-            // Función de saneamiento estricto para compactar texto con letras separadas
-            function sanearTextoPDF(texto) {
-                if (!texto) return "No registrado";
-                let s = String(texto);
-                let ant;
-                do {
-                    ant = s;
-                    s = s.replace(/\b([A-Za-z0-9])\s([A-Za-z0-9])\b/g, '$1$2');
-                } while (s !== ant);
-                return s.replace(/\s+/g, ' ').trim();
-            }
-
             function agregarFila(etiqueta, valor) {
-                // 1. Renderizado de Etiqueta
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
-                // 2. Renderizado de Valor con saneamiento automático aplicado
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
-                let valorTexto = sanearTextoPDF(valor);
+                let valorTexto = sanearTextoGlobal(valor);
                 
                 doc.text(valorTexto, columnaValorX, y);
                 
-                y += 7; // Salto vertical uniforme entre filas
+                y += 7; 
             }
 
-            // Secciones estructuradas con estética simétrica impecable
+            // Secciones estructuradas
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
@@ -425,3 +416,4 @@ ${enlaceUbicacion}`;
     </script>
 </body>
 </html>
+
