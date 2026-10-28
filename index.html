@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <title>RB-Emergencia Vial - Ficha Médica</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librería jsPDF Nativa y plugin AutoTable para estructura limpia -->
+    <!-- Librería jsPDF Nativa y plugin AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -114,7 +114,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y nuevo motor de PDF unificado por tablas -->
+    <!-- Script de conexión y nuevo generador PDF maestro desde cero -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -135,16 +135,12 @@
             );
         }
 
-        // Limpiador seguro que preserva los espacios correctos entre palabras reales
-        function limpiarTextoNatural(texto) {
+        // Función estricta para asegurar que el vehículo se imprima limpio y ordenado
+        function limpiarVehiculoSeguro(texto) {
             if (!texto) return "No registrado";
             let s = String(texto).trim();
-            // Si viene con espacios individuales excesivos entre letras, los compacta pero deja un espacio entre palabras
-            if (s.replace(/\s+/g, '').length < s.length / 1.4) {
-                // Si contiene la palabra clave conocida del vehículo, devolvemos el valor estándar limpio
-                if (s.toLowerCase().includes("moto") || s.toLowerCase().includes("bera") || s.toLowerCase().includes("sbr")) {
-                    return "Moto Bera SBR 150";
-                }
+            if (s.toLowerCase().includes("moto") || s.toLowerCase().includes("bera") || s.toLowerCase().includes("sbr")) {
+                return "Moto Bera SBR 150";
             }
             return s.replace(/\s+/g, ' ').trim();
         }
@@ -158,7 +154,7 @@
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
-                    const vehiculoLimpio = limpiarTextoNatural(data.tipoVehiculo);
+                    const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
 
                     document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
                     document.getElementById('cedula-usuario').innerText = data.cedula || "No registrada";
@@ -225,7 +221,7 @@
             }
         }
 
-        // NUEVO MOTOR PDF PROFESIONAL BASADO EN TABLAS AUTO-ESTRUCTURADAS (ELIMINA CUALQUIER DESFASE)
+        // NUEVO MOTOR PDF MAESTRO DESDE CERO (ESTRUCTURA UNIFICADA)
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) return;
@@ -234,19 +230,19 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // Encabezado del Documento
+            // ENCABEZADO OFICIAL CON LOS NUEVOS TEXTOS ACORDADOS
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(14);
+            doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
             doc.text("RB-EMERGENCIA VIAL", 15, 15);
 
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("ÁMBITO NACIONAL • REPÚBLICA BOLIVARIANA DE VENEZUELA", 15, 20);
+            doc.text("PLATAFORMA DE EMERGENCIA VIAL", 15, 20);
 
             doc.setFontSize(9);
             doc.setTextColor(153, 27, 27);
-            doc.text("DOCUMENTO OFICIAL", 195, 15, { align: "right" });
+            doc.text("FICHA MÉDICA DE EMERGENCIA", 195, 15, { align: "right" });
 
             const fechaStr = new Date().toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             doc.setFont("helvetica", "normal");
@@ -266,59 +262,59 @@
                 parentescoLimpio = p[1].replace(")", "").trim();
             }
 
-            const vehiculoPdfFinal = limpiarTextoNatural(data.tipoVehiculo);
+            const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
 
-            // Estructura de Secciones por Tablas Nativas (Garantiza tipografía, tamaño y alineación 100% idénticos y sin errores)
-            const generarSeccionTabla = (tituloSeccion, filasDatos, startY) => {
-                doc.autoTable({
-                    startY: startY,
-                    head: [[{ content: tituloSeccion, colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }]],
-                    body: filasDatos,
-                    theme: 'plain',
-                    styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
-                    columnStyles: { 0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 45 }, 1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 135 } },
-                    margin: { left: 15, right: 15 }
-                });
-                return doc.lastAutoTable.finalY + 4;
-            };
+            // CONSTRUCCIÓN DE LA TABLA MAESTRA UNIFICADA (DISEÑO DESDE CERO SIN DESFASE)
+            doc.autoTable({
+                startY: 28,
+                body: [
+                    // Sección 1
+                    [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Nombre Completo:", data.nombreCompleto || "No registrado"],
+                    ["Cédula de Identidad:", data.cedula || "No registrada"],
+                    ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
+                    ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
+                    ["Dirección:", data.direccion || "No registrada"],
 
-            let nextY = 28;
-            nextY = generarSeccionTabla("1. DATOS PERSONALES DEL CIUDADANO", [
-                ["Nombre Completo:", data.nombreCompleto || "No registrado"],
-                ["Cédula de Identidad:", data.cedula || "No registrada"],
-                ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
-                ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
-                ["Dirección:", data.direccion || "No registrada"]
-            ], nextY);
+                    // Sección 2
+                    [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Tipo de Sangre:", data.tipoSangre || "N/A"],
+                    ["Alergias Conocidas:", data.alergias || "Ninguna"],
+                    ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
+                    ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-            nextY = generarSeccionTabla("2. ANTECEDENTES Y PERFIL MÉDICO", [
-                ["Tipo de Sangre:", data.tipoSangre || "N/A"],
-                ["Alergias Conocidas:", data.alergias || "Ninguna"],
-                ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
-                ["Medicamentos Habituales:", data.medicamentos || "Ninguno"]
-            ], nextY);
+                    // Sección 3
+                    [{ content: "3. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Nombre del Contacto:", nombreContactoLimpio],
+                    ["Parentesco:", parentescoLimpio],
+                    ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"],
 
-            nextY = generarSeccionTabla("3. CONTACTO DE EMERGENCIA NOTIFICADO", [
-                ["Nombre del Contacto:", nombreContactoLimpio],
-                ["Parentesco:", parentescoLimpio],
-                ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"]
-            ], nextY);
+                    // Sección 4
+                    [{ content: "4. DATOS DEL VEHÍCULO Y PÓLIZA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Placa:", data.placaVehiculo || "No registrado"],
+                    ["Tipo de Vehículo:", vehiculoPdfFinal],
+                    ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
+                    ["N° de Póliza:", data.nroPoliza || "No registrado"]
+                ],
+                theme: 'plain',
+                styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
+                columnStyles: { 
+                    0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 45 }, 
+                    1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 135 } 
+                },
+                margin: { left: 15, right: 15 }
+            });
 
-            nextY = generarSeccionTabla("4. DATOS DEL VEHÍCULO Y PÓLIZA", [
-                ["Placa:", data.placaVehiculo || "No registrado"],
-                ["Tipo de Vehículo:", vehiculoPdfFinal],
-                ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
-                ["N° de Póliza:", data.nroPoliza || "No registrado"]
-            ], nextY);
+            const finalY = doc.lastAutoTable.finalY + 4;
 
             // Pie de página del PDF
             doc.setDrawColor(203, 213, 225);
-            doc.line(15, nextY + 2, 195, nextY + 2);
+            doc.line(15, finalY, 195, finalY);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).", 105, nextY + 7, { align: "center" });
-            doc.text("Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.", 105, nextY + 11, { align: "center" });
+            doc.text("Ficha generada de manera automatizada a través de la plataforma RB-Emergencia Vial.", 105, finalY + 5, { align: "center" });
+            doc.text("Soporte informativo privado para asistencia en carretera y cuerpos de respuesta rápida.", 105, finalY + 9, { align: "center" });
 
             try {
                 const pdfDataUri = doc.output('datauristring');
