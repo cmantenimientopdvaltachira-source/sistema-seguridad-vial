@@ -6,7 +6,7 @@
     <title>RB-Emergencia Vial - Ficha Médica</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librería jsPDF Nativa y plugin AutoTable para estructura limpia -->
+    <!-- Librería jsPDF Nativa y plugin AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -114,7 +114,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y nuevo motor de PDF unificado por tablas -->
+    <!-- Script de conexión y generación PDF actualizada -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -135,13 +135,10 @@
             );
         }
 
-        // Limpiador seguro que preserva los espacios correctos entre palabras reales
         function limpiarTextoNatural(texto) {
             if (!texto) return "No registrado";
             let s = String(texto).trim();
-            // Si viene con espacios individuales excesivos entre letras, los compacta pero deja un espacio entre palabras
             if (s.replace(/\s+/g, '').length < s.length / 1.4) {
-                // Si contiene la palabra clave conocida del vehículo, devolvemos el valor estándar limpio
                 if (s.toLowerCase().includes("moto") || s.toLowerCase().includes("bera") || s.toLowerCase().includes("sbr")) {
                     return "Moto Bera SBR 150";
                 }
@@ -225,7 +222,7 @@
             }
         }
 
-        // NUEVO MOTOR PDF PROFESIONAL BASADO EN TABLAS AUTO-ESTRUCTURADAS (ELIMINA CUALQUIER DESFASE)
+        // GENERADOR DE PDF CON NUEVOS ENCABEZADOS PROFESIONALES
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) return;
@@ -234,19 +231,19 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // Encabezado del Documento
+            // Encabezado del Documento con los nuevos textos elegidos
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(14);
+            doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
-            doc.text("RB-EMERGENCIA VIAL", 15, 15);
+            doc.text("PLATAFORMA DE EMERGENCIA VIAL", 15, 15);
 
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("ÁMBITO NACIONAL • REPÚBLICA BOLIVARIANA DE VENEZUELA", 15, 20);
+            doc.text("RB-EMERGENCIA VIAL • ASISTENCIA Y PRIMERA RESPUESTA", 15, 20);
 
             doc.setFontSize(9);
             doc.setTextColor(153, 27, 27);
-            doc.text("DOCUMENTO OFICIAL", 195, 15, { align: "right" });
+            doc.text("FICHA MÉDICA DE EMERGENCIA", 195, 15, { align: "right" });
 
             const fechaStr = new Date().toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
             doc.setFont("helvetica", "normal");
@@ -268,7 +265,6 @@
 
             const vehiculoPdfFinal = limpiarTextoNatural(data.tipoVehiculo);
 
-            // Estructura de Secciones por Tablas Nativas (Garantiza tipografía, tamaño y alineación 100% idénticos y sin errores)
             const generarSeccionTabla = (tituloSeccion, filasDatos, startY) => {
                 doc.autoTable({
                     startY: startY,
@@ -317,8 +313,8 @@
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("Ficha generada de manera automatizada a través del sistema RB-Emergencia Vial (Ámbito Nacional).", 105, nextY + 7, { align: "center" });
-            doc.text("Válido exclusivamente para soporte informativo de cuerpos de respuesta médica y rescate.", 105, nextY + 11, { align: "center" });
+            doc.text("Ficha generada de manera automatizada a través de la plataforma RB-Emergencia Vial.", 105, nextY + 7, { align: "center" });
+            doc.text("Soporte informativo privado para asistencia en carretera y cuerpos de respuesta rápida.", 105, nextY + 11, { align: "center" });
 
             try {
                 const pdfDataUri = doc.output('datauristring');
