@@ -122,7 +122,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión a Firebase y lógica de generación PDF con Estética Perfecta -->
+    <!-- Script de conexión a Firebase y lógica de generación PDF con Alineación de Valores Blindada -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -247,7 +247,7 @@ ${enlaceUbicacion}`;
             }
         }
 
-        // EXPORTACIÓN A PDF CON MAQUETACIÓN ESTÉTICA PULIDA (MÁRGENES Y ESPACIADOS PERFECTOS)
+        // EXPORTACIÓN A PDF CON BLINDAJE DE ALINEACIÓN DE VALORES EXACTA
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) {
@@ -266,7 +266,7 @@ ${enlaceUbicacion}`;
             let y = 15; 
             const margenX = 15;
             const anchoUtil = 180; 
-            const columnaValorX = 60; // Columna de valores alineada y separada para evitar choques
+            const columnaValorX = 60; // Coordenada X fija e inalterable para todos los valores
 
             // Membrete Oficial
             doc.setFont("helvetica", "bold");
@@ -297,35 +297,40 @@ ${enlaceUbicacion}`;
             doc.line(margenX, y, 195, y);
 
             function agregarTituloSeccion(titulo) {
-                y += 9; // Espacio superior antes de la barra gris
+                y += 9; 
                 doc.setFillColor(241, 245, 249);
                 doc.rect(margenX, y, anchoUtil, 6, "F");
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 doc.setTextColor(51, 65, 85);
                 doc.text(titulo, margenX + 3, y + 4);
-                y += 9; // Margen de respiro perfecto para que el primer texto NO quede pegado al borde azul/gris
+                y += 9; 
             }
 
             function agregarFila(etiqueta, valor) {
+                // Configurar fuente para la etiqueta
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 doc.setTextColor(71, 85, 105);
                 doc.text(etiqueta, margenX, y);
 
+                // Forzar estrictamente fuente normal y tamaño 9 para el valor (evita herencias de tamaño)
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(9); // Tamaño de letra 100% unificado para todos los valores (incluyendo tipo de vehículo)
+                doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
                 
                 const valorTexto = String(valor || "No registrado");
-                const lineasValor = doc.splitTextToSize(valorTexto, 130); // Ancho seguro para evitar desbordes
-                doc.text(lineasValor, columnaValorX, y);
+                const lineasValor = doc.splitTextToSize(valorTexto, 130); 
                 
-                // Interlineado limpio y uniforme
+                // Imprimir cada línea forzando explícitamente la coordenada X inicial (columnaValorX)
+                for (let i = 0; i < lineasValor.length; i++) {
+                    doc.text(lineasValor[i], columnaValorX, y + (i * 5));
+                }
+                
                 y += (lineasValor.length * 6) + 2;
             }
 
-            // Secciones estructuradas con estética simétrica impecable
+            // Secciones estructuradas con alineación blindada
             agregarTituloSeccion("1. DATOS PERSONALES DEL CIUDADANO");
             agregarFila("Nombre Completo:", data.nombreCompleto);
             agregarFila("Cédula de Identidad:", data.cedula);
