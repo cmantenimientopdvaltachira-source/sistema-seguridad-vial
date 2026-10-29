@@ -61,21 +61,35 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 3 (Antes Bloque 4: Vehículo y Póliza ahora agrupado con los datos informativos) -->
+            <!-- BLOQUE 3: DATOS DEL VEHÍCULO -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Vehículo y Póliza</span>
+                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Datos del Vehículo</span>
                 <div class="text-base text-slate-700 space-y-1">
                     <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
-                    <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
-                    <p>Nro. Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
                 </div>
             </div>
 
-            <!-- BLOQUE 4 (Antes Bloque 3: Contacto de Emergencia y Botones de Acción al final) -->
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL (NUEVO MÓDULO INDEPENDIENTE) -->
+            <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200 space-y-3">
+                <div>
+                    <span class="block text-sm font-extrabold text-indigo-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
+                    <div class="text-base text-slate-700 mt-2 space-y-1">
+                        <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
+                        <p>N° de Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
+                    </div>
+                </div>
+                <div class="pt-1">
+                    <a id="btn-seguro" href="#" class="block w-full bg-indigo-600 hover:bg-indigo-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                        📞 Contactar Asistencia y HCM 24/7
+                    </a>
+                </div>
+            </div>
+
+            <!-- BLOQUE 5: CONTACTO DE EMERGENCIA -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div>
-                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">4. Contacto de Emergencia</span>
+                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contacto de Emergencia</span>
                     <h3 id="contacto-nombre" class="text-xl font-extrabold text-slate-900 mt-1.5">--</h3>
                     <p class="text-base text-slate-700 mt-1">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
                 </div>
@@ -89,9 +103,9 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 5 -->
+            <!-- BLOQUE 6 -->
             <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
-                <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">5. Sistema Integral de Emergencia</span>
+                <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
                 <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
                 <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
@@ -114,7 +128,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y motor PDF maestro con orden actualizado -->
+    <!-- Script de conexión y motor PDF maestro -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -181,6 +195,23 @@
                     document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
+
+                    // Configurar botón de llamada a la aseguradora / asistencia 24/7 (Si la base de datos provee un teléfono de seguro, se usa; de lo contrario se oculta o se deja listo)
+                    const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora; // Campo flexible por si lo agregas en Firebase luego
+                    const btnSeguro = document.getElementById('btn-seguro');
+                    if (telefonoSeguro) {
+                        btnSeguro.classList.remove('opacity-50', 'pointer-events-none');
+                        btnSeguro.setAttribute('href', `tel:${telefonoSeguro.replace(/\D/g, '')}`);
+                    } else {
+                        // Si no hay número específico de aseguradora guardado, se puede mantener activo como enlace genérico o guía
+                        btnSeguro.addEventListener('click', (e) => {
+                            if (!telefonoSeguro) {
+                                e.preventDefault();
+                                alert("Número de central de asistencia no configurado en este perfil.");
+                            }
+                        });
+                        btnSeguro.classList.add('opacity-50', 'pointer-events-none');
+                    }
 
                     const telefonoFamiliar = data.contactoTelefono;
                     const btnLlamar = document.getElementById('btn-llamar');
@@ -261,7 +292,7 @@
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
 
-            // TABLA MAESTRA CON ORDEN ACTUALIZADO (Vehículo 3, Contacto 4)
+            // TABLA MAESTRA CON MÓDULO DE PÓLIZA Y HCM SEPARADO
             doc.autoTable({
                 startY: 28,
                 body: [
@@ -278,13 +309,15 @@
                     ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                     ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                    [{ content: "3. DATOS DEL VEHÍCULO Y PÓLIZA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Placa:", data.placaVehiculo || "No registrado"],
                     ["Tipo de Vehículo:", vehiculoPdfFinal],
+
+                    [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                     ["N° de Póliza:", data.nroPoliza || "No registrado"],
 
-                    [{ content: "4. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    [{ content: "5. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Nombre del Contacto:", nombreContactoLimpio],
                     ["Parentesco:", parentescoLimpio],
                     ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"]
