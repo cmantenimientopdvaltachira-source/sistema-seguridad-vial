@@ -61,10 +61,21 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 3 -->
+            <!-- BLOQUE 3 (Antes Bloque 4: Vehículo y Póliza ahora agrupado con los datos informativos) -->
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Vehículo y Póliza</span>
+                <div class="text-base text-slate-700 space-y-1">
+                    <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
+                    <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
+                    <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
+                    <p>Nro. Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
+                </div>
+            </div>
+
+            <!-- BLOQUE 4 (Antes Bloque 3: Contacto de Emergencia y Botones de Acción al final) -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <div>
-                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">3. Contacto de Emergencia</span>
+                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">4. Contacto de Emergencia</span>
                     <h3 id="contacto-nombre" class="text-xl font-extrabold text-slate-900 mt-1.5">--</h3>
                     <p class="text-base text-slate-700 mt-1">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
                 </div>
@@ -75,17 +86,6 @@
                     <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         💬 Enviar Alerta WhatsApp (Con GPS)
                     </a>
-                </div>
-            </div>
-
-            <!-- BLOQUE 4 -->
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">4. Vehículo y Póliza</span>
-                <div class="text-base text-slate-700 space-y-1">
-                    <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
-                    <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
-                    <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
-                    <p>Nro. Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
                 </div>
             </div>
 
@@ -114,7 +114,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y motor PDF maestro -->
+    <!-- Script de conexión y motor PDF maestro con orden actualizado -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -261,6 +261,7 @@
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
 
+            // TABLA MAESTRA CON ORDEN ACTUALIZADO (Vehículo 3, Contacto 4)
             doc.autoTable({
                 startY: 28,
                 body: [
@@ -277,16 +278,16 @@
                     ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                     ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                    [{ content: "3. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Nombre del Contacto:", nombreContactoLimpio],
-                    ["Parentesco:", parentescoLimpio],
-                    ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"],
-
-                    [{ content: "4. DATOS DEL VEHÍCULO Y PÓLIZA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    [{ content: "3. DATOS DEL VEHÍCULO Y PÓLIZA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Placa:", data.placaVehiculo || "No registrado"],
                     ["Tipo de Vehículo:", vehiculoPdfFinal],
                     ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
-                    ["N° de Póliza:", data.nroPoliza || "No registrado"]
+                    ["N° de Póliza:", data.nroPoliza || "No registrado"],
+
+                    [{ content: "4. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Nombre del Contacto:", nombreContactoLimpio],
+                    ["Parentesco:", parentescoLimpio],
+                    ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"]
                 ],
                 theme: 'plain',
                 styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
