@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -36,26 +36,26 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 2 -->
+            <!-- BLOQUE 2 (Actualizado: Alineación perfecta y unificación de color en los tres contenedores) -->
             <div>
                 <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider mb-2">2. Información Médica</span>
                 <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 text-center flex flex-col justify-center">
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-between">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
-                        <span id="tipo-sangre" class="text-4xl font-black text-red-700 mt-1 block">--</span>
+                        <span id="tipo-sangre" class="text-4xl font-black text-red-700 my-auto block text-center">--</span>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-center space-y-1">
-                        <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wide">Alergias</span>
-                        <p id="alergias" class="text-base font-semibold text-slate-900">--</p>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-between">
+                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
+                        <p id="alergias" class="text-base font-semibold text-slate-900 my-auto">--</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 bg-orange-50 p-4 rounded-xl border border-orange-200">
+                <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
                     <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Condiciones Crónicas</span>
+                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Condiciones Crónicas</span>
                         <p id="condiciones-medicas" class="text-base font-semibold text-slate-900">--</p>
                     </div>
                     <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-orange-800 uppercase tracking-wide">Medicamentos</span>
+                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Medicamentos</span>
                         <p id="medicamentos" class="text-base font-semibold text-slate-900">--</p>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y nuevo generador PDF maestro desde cero -->
+    <!-- Script de conexión y motor PDF maestro -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -135,7 +135,6 @@
             );
         }
 
-        // Función estricta para asegurar que el vehículo se imprima limpio y ordenado
         function limpiarVehiculoSeguro(texto) {
             if (!texto) return "No registrado";
             let s = String(texto).trim();
@@ -221,7 +220,6 @@
             }
         }
 
-        // NUEVO MOTOR PDF MAESTRO DESDE CERO (ESTRUCTURA UNIFICADA)
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) return;
@@ -230,7 +228,6 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // ENCABEZADO OFICIAL CON LOS NUEVOS TEXTOS ACORDADOS
             doc.setFont("helvetica", "bold");
             doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
@@ -264,11 +261,9 @@
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
 
-            // CONSTRUCCIÓN DE LA TABLA MAESTRA UNIFICADA (DISEÑO DESDE CERO SIN DESFASE)
             doc.autoTable({
                 startY: 28,
                 body: [
-                    // Sección 1
                     [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Nombre Completo:", data.nombreCompleto || "No registrado"],
                     ["Cédula de Identidad:", data.cedula || "No registrada"],
@@ -276,20 +271,17 @@
                     ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
                     ["Dirección:", data.direccion || "No registrada"],
 
-                    // Sección 2
                     [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Tipo de Sangre:", data.tipoSangre || "N/A"],
                     ["Alergias Conocidas:", data.alergias || "Ninguna"],
                     ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                     ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                    // Sección 3
                     [{ content: "3. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Nombre del Contacto:", nombreContactoLimpio],
                     ["Parentesco:", parentescoLimpio],
                     ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"],
 
-                    // Sección 4
                     [{ content: "4. DATOS DEL VEHÍCULO Y PÓLIZA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                     ["Placa:", data.placaVehiculo || "No registrado"],
                     ["Tipo de Vehículo:", vehiculoPdfFinal],
@@ -307,7 +299,6 @@
 
             const finalY = doc.lastAutoTable.finalY + 4;
 
-            // Pie de página del PDF
             doc.setDrawColor(203, 213, 225);
             doc.line(15, finalY, 195, finalY);
             doc.setFont("helvetica", "normal");
