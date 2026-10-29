@@ -150,7 +150,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y motor PDF maestro con doble contacto -->
+    <!-- Script de conexión y motor PDF maestro -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -206,14 +206,13 @@
                     document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
                     document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
-                    // Contacto 2 (Graceful degradation si no existe)
+                    // Contacto 2
                     const contacto2Bloque = document.getElementById('contenedor-contacto-2');
                     if (data.contacto2Nombre) {
                         contacto2Bloque.style.display = 'block';
                         document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
                         document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
                     } else {
-                        // Si no hay segundo contacto, ocultamos el bloque secundario elegantemente
                         contacto2Bloque.style.display = 'none';
                     }
                     
@@ -257,7 +256,10 @@
                         let telWp = tel1.replace(/\D/g,'');
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL (Contacto 1).\n\nCiudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\n📍 Ubicación:\n${gpsUrl}`;
+                        
+                        // TEXTO DE WHATSAPP CON LA NOTA ANTIESTAFAS DEFINITIVA
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
@@ -280,7 +282,10 @@
                         let telWp = tel2.replace(/\D/g,'');
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL (Contacto 2).\n\nCiudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\n📍 Ubicación:\n${gpsUrl}`;
+                        
+                        // TEXTO DE WHATSAPP CON LA NOTA ANTIESTAFAS DEFINITIVA
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
@@ -333,7 +338,6 @@
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
 
-            // Construir contenido base de la tabla PDF
             let cuerpoTabla = [
                 [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Nombre Completo:", data.nombreCompleto || "No registrado"],
@@ -362,7 +366,6 @@
                 ["Contacto 1 (Teléfono):", data.contacto1Telefono || "No registrado"]
             ];
 
-            // Si hay contacto 2, lo agregamos dinámicamente al PDF también
             if (data.contacto2Nombre) {
                 cuerpoTabla.push(
                     ["Contacto 2 (Nombre):", data.contacto2Nombre],
