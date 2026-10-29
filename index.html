@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 3: DATOS DEL VEHÍCULO (Estándar Azul) -->
+            <!-- BLOQUE 3: DATOS DEL VEHÍCULO -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
                 <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Datos del Vehículo</span>
                 <div class="text-base text-slate-700 space-y-1">
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL (Estándar Azul Unificado) -->
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
                     <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
@@ -86,20 +86,42 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 5: CONTACTO DE EMERGENCIA -->
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                <div>
-                    <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contacto de Emergencia</span>
-                    <h3 id="contacto-nombre" class="text-xl font-extrabold text-slate-900 mt-1.5">--</h3>
-                    <p class="text-base text-slate-700 mt-1">Parentesco: <span id="contacto-parentesco" class="font-bold text-slate-900">--</span></p>
+            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contactos de Emergencia</span>
+                
+                <!-- Contacto 1 -->
+                <div class="border-b border-slate-200 pb-3 space-y-2">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Contacto Principal</span>
+                        <h3 id="contacto1-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
+                        <p class="text-sm text-slate-700">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2 pt-1">
+                        <a id="btn-llamar-1" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                            📞 Llamar al Contacto 1
+                        </a>
+                        <a id="btn-whatsapp-1" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                            💬 Enviar Alerta WhatsApp 1 (Con GPS)
+                        </a>
+                    </div>
                 </div>
-                <div class="grid grid-cols-1 gap-2.5 pt-1">
-                    <a id="btn-llamar" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
-                        📞 Llamar al Familiar
-                    </a>
-                    <a id="btn-whatsapp" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
-                        💬 Enviar Alerta WhatsApp (Con GPS)
-                    </a>
+
+                <!-- Contacto 2 -->
+                <div id="contenedor-contacto-2" class="space-y-2 pt-1">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Contacto Secundario</span>
+                        <h3 id="contacto2-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
+                        <p class="text-sm text-slate-700">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
+                    </div>
+                    <div class="grid grid-cols-1 gap-2 pt-1">
+                        <a id="btn-llamar-2" href="#" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                            📞 Llamar al Contacto 2
+                        </a>
+                        <a id="btn-whatsapp-2" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                            💬 Enviar Alerta WhatsApp 2 (Con GPS)
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -128,7 +150,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y motor PDF maestro -->
+    <!-- Script de conexión y motor PDF maestro con doble contacto -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -180,22 +202,27 @@
                     document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
                     document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
                     
-                    let nombreContacto = data.contactoNombre || "No registrado";
-                    let parentescoContacto = data.contactoParentesco || "";
-                    if (nombreContacto.includes("(")) {
-                        const partes = nombreContacto.split("(");
-                        nombreContacto = partes[0].trim();
-                        if (!parentescoContacto) parentescoContacto = partes[1].replace(")", "").trim();
-                    }
+                    // Contacto 1
+                    document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
+                    document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
-                    document.getElementById('contacto-nombre').innerText = nombreContacto;
-                    document.getElementById('contacto-parentesco').innerText = parentescoContacto || "No especificado";
+                    // Contacto 2 (Graceful degradation si no existe)
+                    const contacto2Bloque = document.getElementById('contenedor-contacto-2');
+                    if (data.contacto2Nombre) {
+                        contacto2Bloque.style.display = 'block';
+                        document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
+                        document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
+                    } else {
+                        // Si no hay segundo contacto, ocultamos el bloque secundario elegantemente
+                        contacto2Bloque.style.display = 'none';
+                    }
                     
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
                     document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
+                    // Botón Seguro
                     const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
                     const btnSeguro = document.getElementById('btn-seguro');
                     if (telefonoSeguro) {
@@ -211,31 +238,55 @@
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    const telefonoFamiliar = data.contactoTelefono;
-                    const btnLlamar = document.getElementById('btn-llamar');
-                    if (telefonoFamiliar) {
-                        btnLlamar.classList.remove('opacity-50', 'pointer-events-none');
-                        btnLlamar.setAttribute('href', `tel:${telefonoFamiliar.replace(/\D/g, '')}`);
+                    // Botones Contacto 1
+                    const tel1 = data.contacto1Telefono;
+                    const btnLlamar1 = document.getElementById('btn-llamar-1');
+                    if (tel1) {
+                        btnLlamar1.classList.remove('opacity-50', 'pointer-events-none');
+                        btnLlamar1.setAttribute('href', `tel:${tel1.replace(/\D/g, '')}`);
                     } else {
-                        btnLlamar.classList.add('opacity-50', 'pointer-events-none');
+                        btnLlamar1.classList.add('opacity-50', 'pointer-events-none');
                     }
+
+                    document.getElementById('btn-whatsapp-1').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (!tel1) {
+                            alert("Teléfono de contacto 1 no disponible.");
+                            return;
+                        }
+                        let telWp = tel1.replace(/\D/g,'');
+                        if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
+                        const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL (Contacto 1).\n\nCiudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\n📍 Ubicación:\n${gpsUrl}`;
+                        window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
+                    });
+
+                    // Botones Contacto 2
+                    const tel2 = data.contacto2Telefono;
+                    const btnLlamar2 = document.getElementById('btn-llamar-2');
+                    if (tel2) {
+                        btnLlamar2.classList.remove('opacity-50', 'pointer-events-none');
+                        btnLlamar2.setAttribute('href', `tel:${tel2.replace(/\D/g, '')}`);
+                    } else {
+                        btnLlamar2.classList.add('opacity-50', 'pointer-events-none');
+                    }
+
+                    document.getElementById('btn-whatsapp-2').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (!tel2) {
+                            alert("Teléfono de contacto 2 no disponible.");
+                            return;
+                        }
+                        let telWp = tel2.replace(/\D/g,'');
+                        if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
+                        const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL (Contacto 2).\n\nCiudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\n📍 Ubicación:\n${gpsUrl}`;
+                        window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
+                    });
 
                     document.getElementById('btn-171').addEventListener('click', (e) => {
                         e.preventDefault();
                         window.location.href = 'tel:171';
-                    });
-
-                    document.getElementById('btn-whatsapp').addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (!telefonoFamiliar) {
-                            alert("Teléfono de familiar no disponible.");
-                            return;
-                        }
-                        let telWp = telefonoFamiliar.replace(/\D/g,'');
-                        if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
-                        const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nCiudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*).\n\n📍 Ubicación:\n${gpsUrl}`;
-                        window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
                     document.getElementById('loading').classList.add('hidden');
@@ -280,45 +331,49 @@
             doc.setLineWidth(0.5);
             doc.line(15, 24, 195, 24);
 
-            let nombreContactoLimpio = data.contactoNombre || "No registrado";
-            let parentescoLimpio = data.contactoParentesco || "No especificado";
-            if (nombreContactoLimpio.includes("(")) {
-                const p = nombreContactoLimpio.split("(");
-                nombreContactoLimpio = p[0].trim();
-                parentescoLimpio = p[1].replace(")", "").trim();
-            }
-
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
+
+            // Construir contenido base de la tabla PDF
+            let cuerpoTabla = [
+                [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Nombre Completo:", data.nombreCompleto || "No registrado"],
+                ["Cédula de Identidad:", data.cedula || "No registrada"],
+                ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
+                ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
+                ["Dirección:", data.direccion || "No registrada"],
+
+                [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Tipo de Sangre:", data.tipoSangre || "N/A"],
+                ["Alergias Conocidas:", data.alergias || "Ninguna"],
+                ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
+                ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
+
+                [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Placa:", data.placaVehiculo || "No registrado"],
+                ["Tipo de Vehículo:", vehiculoPdfFinal],
+
+                [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
+                ["N° de Póliza:", data.nroPoliza || "No registrado"],
+
+                [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Contacto 1 (Nombre):", data.contacto1Nombre || "No registrado"],
+                ["Contacto 1 (Parentesco):", data.contacto1Parentesco || "No especificado"],
+                ["Contacto 1 (Teléfono):", data.contacto1Telefono || "No registrado"]
+            ];
+
+            // Si hay contacto 2, lo agregamos dinámicamente al PDF también
+            if (data.contacto2Nombre) {
+                cuerpoTabla.push(
+                    ["Contacto 2 (Nombre):", data.contacto2Nombre],
+                    ["Contacto 2 (Parentesco):", data.contacto2Parentesco || "No especificado"],
+                    ["Contacto 2 (Teléfono):", data.contacto2Telefono || "No registrado"]
+                );
+            }
 
             doc.autoTable({
                 startY: 28,
-                body: [
-                    [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Nombre Completo:", data.nombreCompleto || "No registrado"],
-                    ["Cédula de Identidad:", data.cedula || "No registrada"],
-                    ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
-                    ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
-                    ["Dirección:", data.direccion || "No registrada"],
-
-                    [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Tipo de Sangre:", data.tipoSangre || "N/A"],
-                    ["Alergias Conocidas:", data.alergias || "Ninguna"],
-                    ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
-                    ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
-
-                    [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Placa:", data.placaVehiculo || "No registrado"],
-                    ["Tipo de Vehículo:", vehiculoPdfFinal],
-
-                    [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
-                    ["N° de Póliza:", data.nroPoliza || "No registrado"],
-
-                    [{ content: "5. CONTACTO DE EMERGENCIA NOTIFICADO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                    ["Nombre del Contacto:", nombreContactoLimpio],
-                    ["Parentesco:", parentescoLimpio],
-                    ["Teléfono de Contacto:", data.contactoTelefono || "No registrado"]
-                ],
+                body: cuerpoTabla,
                 theme: 'plain',
                 styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
                 columnStyles: { 
