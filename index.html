@@ -257,7 +257,6 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        // TEXTO DE WHATSAPP CON LA NOTA ANTIESTAFAS DEFINITIVA
                         const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
@@ -283,7 +282,6 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        // TEXTO DE WHATSAPP CON LA NOTA ANTIESTAFAS DEFINITIVA
                         const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
@@ -337,7 +335,9 @@
             doc.line(15, 24, 195, 24);
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
+            const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
+            // TABLA DEL PDF CON NOMBRES LIMPIOS Y TELÉFONO DE SEGURO INCLUIDO
             let cuerpoTabla = [
                 [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Nombre Completo:", data.nombreCompleto || "No registrado"],
@@ -359,18 +359,19 @@
                 [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                 ["N° de Póliza:", data.nroPoliza || "No registrado"],
+                ["Teléfono Asistencia:", telefonoSeguroPdf],
 
                 [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
-                ["Contacto 1 (Nombre):", data.contacto1Nombre || "No registrado"],
-                ["Contacto 1 (Parentesco):", data.contacto1Parentesco || "No especificado"],
-                ["Contacto 1 (Teléfono):", data.contacto1Telefono || "No registrado"]
+                ["Contacto 1:", data.contacto1Nombre || "No registrado"],
+                ["Parentesco:", data.contacto1Parentesco || "No especificado"],
+                ["Teléfono:", data.contacto1Telefono || "No registrado"]
             ];
 
             if (data.contacto2Nombre) {
                 cuerpoTabla.push(
-                    ["Contacto 2 (Nombre):", data.contacto2Nombre],
-                    ["Contacto 2 (Parentesco):", data.contacto2Parentesco || "No especificado"],
-                    ["Contacto 2 (Teléfono):", data.contacto2Telefono || "No registrado"]
+                    ["Contacto 2:", data.contacto2Nombre],
+                    ["Parentesco:", data.contacto2Parentesco || "No especificado"],
+                    ["Teléfono:", data.contacto2Telefono || "No registrado"]
                 );
             }
 
