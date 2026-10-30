@@ -27,7 +27,8 @@
             <!-- BLOQUE 1 -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-xl font-extrabold text-slate-900 mt-1.5">--</h2>
+                <!-- TAMAÑO REDUCIDO A text-lg PARA IGUALARSE A LOS CONTACTOS -->
+                <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
                 <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>Documento: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
@@ -337,7 +338,6 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // TABLA DEL PDF CON NOMBRES LIMPIOS Y TELÉFONO DE SEGURO INCLUIDO
             let cuerpoTabla = [
                 [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Nombre Completo:", data.nombreCompleto || "No registrado"],
