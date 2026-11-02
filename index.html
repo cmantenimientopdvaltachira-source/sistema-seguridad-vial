@@ -68,9 +68,9 @@
         .btn-emergency:hover {
             background-color: #246f44;
         }
-        /* Estilos para el Modal de Seguridad (Filtro Antiestafas) */
+        /* Estilos para el Modal de Seguridad (Oculto por defecto) */
         .modal-overlay {
-            display: none;
+            display: none; /* Se mantiene oculto al cargar la página */
             position: fixed;
             top: 0;
             left: 0;
@@ -151,7 +151,7 @@
         <button class="btn-emergency" onclick="openEmergencyModal()">📞 Llamar al Contacto 1</button>
     </div>
 
-    <!-- Modal / Aviso Flotante de Seguridad -->
+    <!-- Modal / Aviso Flotante de Seguridad (Activado únicamente por el botón) -->
     <div class="modal-overlay" id="emergencyModal">
         <div class="modal-content">
             <div class="modal-title">Confirmación de Llamada</div>
@@ -164,7 +164,6 @@
     </div>
 
     <script>
-        // Número de emergencia configurado
         const emergencyPhoneNumber = "04247334110";
 
         function openEmergencyModal() {
