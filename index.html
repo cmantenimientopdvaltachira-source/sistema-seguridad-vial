@@ -3,74 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RB-Emergencia Vial - Perfil Médico</title>
+    <title>RB-Emergencia Vial - Ficha Médica</title>
     <style>
+        :root {
+            --primary-red: #d32f2f;
+            --primary-green: #2e8b57;
+            --bg-color: #f8f9fa;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border-color: #e0e0e0;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
             margin: 0;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
         }
-        .card {
+
+        /* Tarjeta principal con el borde rojo característico de RB-Emergencia Vial */
+        .emergency-card {
             background: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-top: 6px solid var(--primary-red);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 24px;
             box-sizing: border-box;
         }
+
         .card-header {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #edf2f7;
-            padding-bottom: 10px;
             text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
         }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
         .info-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
+
         .info-label {
-            font-size: 0.85rem;
-            color: #718096;
+            font-size: 0.75rem;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
+
         .info-value {
             font-size: 1rem;
-            color: #2d3748;
+            color: var(--text-main);
             font-weight: 600;
         }
-        /* Botón verde de llamada */
-        .btn-emergency {
-            display: block;
+
+        /* Botón verde principal de llamada */
+        .btn-call {
             width: 100%;
-            background-color: #2e8b57;
-            color: white;
-            text-align: center;
+            background-color: var(--primary-green);
+            color: #ffffff;
+            border: none;
             padding: 14px;
             border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-            margin-top: 24px;
-            border: none;
-            cursor: pointer;
             font-size: 1rem;
-            transition: background 0.2s;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
         }
-        .btn-emergency:hover {
+
+        .btn-call:hover {
             background-color: #246f44;
         }
-        /* Estilos para el Modal de Seguridad (Oculto por defecto) */
+
+        /* Modal Flotante de Seguridad (Intersticial) */
         .modal-overlay {
-            display: none; /* Se mantiene oculto al cargar la página */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -80,102 +105,120 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 16px;
+            box-sizing: border-box;
         }
-        .modal-content {
-            background: white;
-            padding: 24px;
+
+        .modal-card {
+            background: #ffffff;
             border-radius: 12px;
-            width: 85%;
+            width: 100%;
             max-width: 320px;
+            padding: 20px;
             text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
+
         .modal-title {
             font-size: 1.1rem;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
         }
-        .modal-text {
+
+        .modal-body {
             font-size: 0.9rem;
-            color: #4a5568;
+            color: #495057;
             line-height: 1.4;
             margin-bottom: 20px;
         }
-        .modal-buttons {
+
+        .modal-actions {
             display: flex;
             gap: 10px;
         }
-        .modal-btn {
+
+        .btn-modal {
             flex: 1;
             padding: 10px;
             border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
             border: none;
+            cursor: pointer;
         }
-        .btn-cancel {
-            background: #edf2f7;
-            color: #4a5568;
+
+        .btn-modal-cancel {
+            background: #e9ecef;
+            color: #495057;
         }
-        .btn-confirm {
-            background: #2e8b57;
-            color: white;
+
+        .btn-modal-confirm {
+            background: var(--primary-green);
+            color: #ffffff;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="card-header">Ficha de Emergencia Médica</div>
-        
+    <!-- Ficha Principal de la Plataforma -->
+    <div class="emergency-card">
+        <div class="card-header">
+            <h2>Ficha de Emergencia Médica</h2>
+        </div>
+
         <div class="info-group">
             <div class="info-label">N° Cédula</div>
-            <div class="info-value" id="cedula-field">V-14776908</div>
+            <div class="info-value">V-14776908</div>
         </div>
 
         <div class="info-group">
             <div class="info-label">F. Nacimiento</div>
-            <div class="info-value" id="nacimiento-field">08/09/1980</div>
+            <div class="info-value">08/09/1980</div>
         </div>
 
         <div class="info-group">
             <div class="info-label">Teléfono Propio</div>
-            <div class="info-value" id="telefono-field">0424-7334110</div>
+            <div class="info-value">0424-7334110</div>
         </div>
 
         <div class="info-group">
             <div class="info-label">Dirección</div>
-            <div class="info-value" id="direccion-field">San Cristóbal, sector Los Kioskos</div>
+            <div class="info-value">San Cristóbal, sector Los Kioskos</div>
         </div>
 
-        <button class="btn-emergency" onclick="openEmergencyModal()">📞 Llamar al Contacto 1</button>
+        <button class="btn-call" onclick="openModal()">
+            📞 Llamar al Contacto 1
+        </button>
     </div>
 
-    <!-- Modal / Aviso Flotante de Seguridad (Activado únicamente por el botón) -->
-    <div class="modal-overlay" id="emergencyModal">
-        <div class="modal-content">
+    <!-- Modal de Seguridad Antiestafas -->
+    <div class="modal-overlay" id="securityModal">
+        <div class="modal-card">
             <div class="modal-title">Confirmación de Llamada</div>
-            <div class="modal-text">Está a punto de comunicarse con el contacto de emergencia registrado. Si no se trata de una situación real de auxilio, por favor cancele esta acción.</div>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeEmergencyModal()">Cancelar</button>
-                <button class="modal-btn btn-confirm" onclick="triggerCall()">Llamar</button>
+            <div class="modal-body">
+                Está a punto de comunicarse con el contacto de emergencia registrado. Si no se trata de una situación real de auxilio, por favor cancele esta acción.
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-modal btn-modal-confirm" onclick="executeCall()">Llamar</button>
             </div>
         </div>
     </div>
 
     <script>
-        const emergencyPhoneNumber = "04247334110";
+        const emergencyContact = "04247334110";
 
-        function openEmergencyModal() {
-            document.getElementById('emergencyModal').style.display = 'flex';
+        function openModal() {
+            document.getElementById('securityModal').style.display = 'flex';
         }
 
-        function closeEmergencyModal() {
-            document.getElementById('emergencyModal').style.display = 'none';
+        function closeModal() {
+            document.getElementById('securityModal').style.display = 'none';
         }
 
-        function triggerCall() {
-            window.location.href = `tel:${emergencyPhoneNumber}`;
+        function executeCall() {
+            window.location.href = `tel:${emergencyContact}`;
         }
     </script>
 
