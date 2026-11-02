@@ -27,7 +27,6 @@
             <!-- BLOQUE 1 -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <!-- TAMAÑO REDUCIDO A text-lg PARA IGUALARSE A LOS CONTACTOS -->
                 <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
                 <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>N° Cédula: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
@@ -71,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL (Marcación directa sin modal) -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
                     <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
@@ -81,13 +80,13 @@
                     </div>
                 </div>
                 <div class="pt-1">
-                    <button id="btn-seguro" type="button" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                    <a id="btn-seguro" href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         📞 Contactar Asistencia y HCM 24/7
-                    </button>
+                    </a>
                 </div>
             </div>
 
-            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) -->
+            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) - PROTEGIDOS CON MODAL -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
                 <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contactos de Emergencia</span>
                 
@@ -126,13 +125,13 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 6 -->
+            <!-- BLOQUE 6 (Marcación directa al 171 sin modal) -->
             <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
                 <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
                 <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
-                <button id="btn-171" type="button" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
-                </button>
+                </a>
             </div>
 
             <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
@@ -147,12 +146,12 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIRMACIÓN / FILTRO ANTIESTAFAS -->
+    <!-- MODAL DE SEGURIDAD (OPCIÓN 2 - INTIMIDANTE / ANTIESTAFAS) -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
-            <div class="modal-title text-lg font-bold text-slate-900 mb-3">Confirmación de Llamada</div>
+            <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
-                Está a punto de comunicarse con el contacto de emergencia registrado. Si no se trata de una situación real de auxilio, por favor cancele esta acción.
+                Está intentando activar un canal de emergencia verificado. Le recordamos que el uso indebido de este acceso con fines de estafa o suplantación es penalizado y rastreado. Si no es una emergencia real, cancele esta acción de inmediato.
             </div>
             <div class="flex gap-3">
                 <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closeEmergencyModal()">Cancelar</button>
@@ -255,17 +254,17 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
-                    // Botón Seguro
+                    // Botón Seguro (Directo, sin modal)
                     const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
                     const btnSeguro = document.getElementById('btn-seguro');
                     if (telefonoSeguro) {
                         btnSeguro.classList.remove('opacity-50', 'pointer-events-none');
-                        btnSeguro.onclick = () => openEmergencyModal(telefonoSeguro);
+                        btnSeguro.setAttribute('href', `tel:${telefonoSeguro.replace(/\D/g, '')}`);
                     } else {
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    // Botones Contacto 1
+                    // Botones Contacto 1 (Protegidos con el Modal de Opción 2)
                     const tel1 = data.contacto1Telefono;
                     const btnLlamar1 = document.getElementById('btn-llamar-1');
                     if (tel1) {
@@ -290,7 +289,7 @@
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botones Contacto 2
+                    // Botones Contacto 2 (Protegidos con el Modal de Opción 2)
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
@@ -315,10 +314,8 @@
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    document.getElementById('btn-171').addEventListener('click', (e) => {
-                        e.preventDefault();
-                        openEmergencyModal('171');
-                    });
+                    // Botón 171 (Directo, sin modal)
+                    document.getElementById('btn-171').setAttribute('href', 'tel:171');
 
                     document.getElementById('loading').classList.add('hidden');
                     document.getElementById('ficha-container').classList.remove('hidden');
