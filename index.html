@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL (Marcación directa sin modal) -->
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
                     <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) - PROTEGIDOS CON MODAL -->
+            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
                 <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contactos de Emergencia</span>
                 
@@ -125,7 +125,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 6 (Marcación directa al 171 sin modal) -->
+            <!-- BLOQUE 6 -->
             <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
                 <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
                 <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
@@ -164,12 +164,15 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión y motor PDF maestro -->
+    <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const motorizadoId = 'MOT-001';
+        // Capturar automáticamente el ID desde la URL (ejemplo: ?id=MOT-002). Si no hay, usa 'MOT-001' por defecto.
+        const urlParams = new URLSearchParams(window.location.search);
+        const motorizadoId = urlParams.get('id') || 'MOT-001';
+
         let datosFichaGlobal = null; 
         let latitudActual = null;
         let longitudActual = null;
@@ -254,7 +257,7 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
-                    // Botón Seguro (Directo, sin modal)
+                    // Botón Seguro
                     const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
                     const btnSeguro = document.getElementById('btn-seguro');
                     if (telefonoSeguro) {
@@ -264,7 +267,7 @@
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    // Botones Contacto 1 (Protegidos con el Modal de Opción 2)
+                    // Botones Contacto 1 (Con modal de seguridad)
                     const tel1 = data.contacto1Telefono;
                     const btnLlamar1 = document.getElementById('btn-llamar-1');
                     if (tel1) {
@@ -284,12 +287,12 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botones Contacto 2 (Protegidos con el Modal de Opción 2)
+                    // Botones Contacto 2 (Con modal de seguridad)
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
@@ -309,12 +312,11 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botón 171 (Directo, sin modal)
                     document.getElementById('btn-171').setAttribute('href', 'tel:171');
 
                     document.getElementById('loading').classList.add('hidden');
