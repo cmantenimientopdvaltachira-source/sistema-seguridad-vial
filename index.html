@@ -341,6 +341,7 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
+            // Encabezado de la página
             doc.setFont("helvetica", "bold");
             doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
@@ -367,30 +368,36 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
+            // NUEVA ESTRUCTURA: Tabla plana estricta sin filas mezcladas de colSpan que alteren la escala
             let cuerpoTabla = [
-                [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 8.5 } }],
+                // Sección 1
+                ["1. DATOS PERSONALES DEL CIUDADANO", ""],
                 ["Nombre Completo:", data.nombreCompleto || "No registrado"],
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
                 ["Dirección:", data.direccion || "No registrada"],
 
-                [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 8.5 } }],
+                // Sección 2
+                ["2. ANTECEDENTES Y PERFIL MÉDICO", ""],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
                 ["Alergias Conocidas:", data.alergias || "Ninguna"],
                 ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                 ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 8.5 } }],
+                // Sección 3
+                ["3. DATOS DEL VEHÍCULO", ""],
                 ["Placa:", data.placaVehiculo || "No registrado"],
                 ["Tipo de Vehículo:", vehiculoPdfFinal],
 
-                [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 8.5 } }],
+                // Sección 4
+                ["4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", ""],
                 ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                 ["N° de Póliza:", data.nroPoliza || "No registrado"],
                 ["Teléfono Asistencia:", telefonoSeguroPdf],
 
-                [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 8.5 } }],
+                // Sección 5
+                ["5. CONTACTOS DE EMERGENCIA NOTIFICADOS", ""],
                 ["Contacto 1:", data.contacto1Nombre || "No registrado"],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto1Telefono || "No registrado"],
@@ -405,14 +412,24 @@
                 theme: 'plain',
                 styles: { 
                     font: 'helvetica', 
-                    fontSize: 8.5, 
-                    cellPadding: 1.6,
+                    fontSize: 9,              // Tamaño de letra estrictamente idéntico y fijo para todo
+                    cellPadding: 1.5,
                     overflow: 'linebreak',
-                    cellWidth: 'wrap'
+                    cellWidth: 'fixed'
                 },
                 columnStyles: { 
-                    0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 50 }, 
-                    1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
+                    0: { cellWidth: 50 }, 
+                    1: { cellWidth: 130 } 
+                },
+                // Función inteligente para pintar las filas de títulos de sección en gris claro sin alterar las fuentes
+                didParseCell: function(data) {
+                    if (data.cell.text[0] && data.cell.text[0].match(/^[1-9]\.\s/)) {
+                        data.cell.colSpan = 2;
+                        data.cell.styles.fillColor = [241, 245, 249];
+                        data.cell.styles.textColor = [51, 65, 85];
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fontSize = 8.5;
+                    }
                 },
                 margin: { left: 15, right: 15 }
             });
