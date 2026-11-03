@@ -368,7 +368,6 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // Normalización estricta del string para Carlos Alberto Zambrano Pérez
             const nombreCarlosNormalizado = String(data.nombreCompleto || "No registrado").replace(/\s+/g, ' ').trim();
             const contacto2Normalizado = String(data.contacto2Nombre || "No registrado").replace(/\s+/g, ' ').trim();
 
@@ -420,14 +419,14 @@
                     1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
                 },
                 willDrawCell: function(cellData) {
-                    // Corrección atómica exclusiva para "Carlos Alberto Zambrano Pérez"
+                    // Replicar de forma exacta las métricas del campo de cédula exclusivamente para Carlos Alberto
                     if (cellData.section === 'body' && cellData.column.index === 1) {
                         if (cellData.row.raw[0] === "Nombre Completo:") {
                             doc.setFont("helvetica", "normal");
                             doc.setFontSize(9);
                             cellData.cell.styles.fontSize = 9;
                             cellData.cell.styles.fontStyle = 'normal';
-                            // Ajuste milimétrico de tracking/espaciado horizontal para evitar separación de caracteres
+                            // Forzar renderizado exacto igual a las métricas estándar de la cédula
                             cellData.cell.text = [nombreCarlosNormalizado];
                         }
                     }
