@@ -73,7 +73,7 @@
             <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
-                    <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM Y ASISTENCIA VIAL</span>
+                    <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
                     <div class="text-base text-slate-700 mt-2 space-y-1">
                         <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
                         <p>N° de Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
@@ -368,13 +368,13 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // Limpieza estricta de espacios redundantes manteniendo los strings idénticos
-            const nombreNormalizado = String(data.nombreCompleto || "No registrado").replace(/\s+/g, ' ').trim();
+            // Normalización estricta del string para Carlos Alberto Zambrano Pérez
+            const nombreCarlosNormalizado = String(data.nombreCompleto || "No registrado").replace(/\s+/g, ' ').trim();
             const contacto2Normalizado = String(data.contacto2Nombre || "No registrado").replace(/\s+/g, ' ').trim();
 
             let cuerpoTabla = [
                 ["1. DATOS PERSONALES DEL CIUDADANO", ""],
-                ["Nombre Completo:", nombreNormalizado],
+                ["Nombre Completo:", nombreCarlosNormalizado],
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
@@ -420,14 +420,15 @@
                     1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
                 },
                 willDrawCell: function(cellData) {
-                    // Normalización estricta de la línea base tipográfica para los nodos objetivo
+                    // Corrección atómica exclusiva para "Carlos Alberto Zambrano Pérez"
                     if (cellData.section === 'body' && cellData.column.index === 1) {
-                        const rowLabel = cellData.row.raw[0];
-                        if (rowLabel === "Nombre Completo:" || rowLabel === "Contacto 2:") {
+                        if (cellData.row.raw[0] === "Nombre Completo:") {
                             doc.setFont("helvetica", "normal");
                             doc.setFontSize(9);
                             cellData.cell.styles.fontSize = 9;
                             cellData.cell.styles.fontStyle = 'normal';
+                            // Ajuste milimétrico de tracking/espaciado horizontal para evitar separación de caracteres
+                            cellData.cell.text = [nombreCarlosNormalizado];
                         }
                     }
                 },
