@@ -27,7 +27,7 @@
             <!-- BLOQUE 1 -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
+                <h2 id="nombre-usuario" class="text-base font-bold text-slate-900 mt-1">--</h2>
                 <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>N° Cédula: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
@@ -419,14 +419,12 @@
                     1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
                 },
                 willDrawCell: function(cellData) {
-                    // Replicar de forma exacta las métricas del campo de cédula exclusivamente para Carlos Alberto
                     if (cellData.section === 'body' && cellData.column.index === 1) {
                         if (cellData.row.raw[0] === "Nombre Completo:") {
                             doc.setFont("helvetica", "normal");
                             doc.setFontSize(9);
                             cellData.cell.styles.fontSize = 9;
                             cellData.cell.styles.fontStyle = 'normal';
-                            // Forzar renderizado exacto igual a las métricas estándar de la cédula
                             cellData.cell.text = [nombreCarlosNormalizado];
                         }
                     }
