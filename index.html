@@ -212,26 +212,6 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-        // Función inteligente para evitar que nombres largos compriman la fuente en el PDF
-        function formatearTextoLargo(texto, maxLen = 23) {
-            if (!texto) return "No registrado";
-            let s = String(texto).trim();
-            if (s.length <= maxLen) return s;
-            let palabras = s.split(" ");
-            let lineas = [];
-            let lineaActual = "";
-            for (let p of palabras) {
-                if ((lineaActual + " " + p).trim().length <= maxLen) {
-                    lineaActual = (lineaActual + " " + p).trim();
-                } else {
-                    if (lineaActual) lineas.push(lineaActual);
-                    lineaActual = p;
-                }
-            }
-            if (lineaActual) lineas.push(lineaActual);
-            return lineas.length > 1 ? lineas : s;
-        }
-
         async function cargarDatos() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -388,19 +368,13 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // Aplicar pre-procesamiento seguro a nombres largos y direcciones
-            const nombrePdf = formatearTextoLargo(data.nombreCompleto, 24);
-            const contacto1Pdf = formatearTextoLargo(data.contacto1Nombre, 24);
-            const contacto2Pdf = formatearTextoLargo(data.contacto2Nombre, 24);
-            const direccionPdf = formatearTextoLargo(data.direccion, 28);
-
             let cuerpoTabla = [
                 ["1. DATOS PERSONALES DEL CIUDADANO", ""],
-                ["Nombre Completo:", nombrePdf],
+                ["Nombre Completo:", data.nombreCompleto || "No registrado"],
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
-                ["Dirección:", direccionPdf],
+                ["Dirección:", data.direccion || "No registrada"],
 
                 ["2. ANTECEDENTES Y PERFIL MÉDICO", ""],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
@@ -418,10 +392,10 @@
                 ["Teléfono Asistencia:", telefonoSeguroPdf],
 
                 ["5. CONTACTOS DE EMERGENCIA NOTIFICADOS", ""],
-                ["Contacto 1:", contacto1Pdf],
+                ["Contacto 1:", data.contacto1Nombre || "No registrado"],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto1Telefono || "No registrado"],
-                ["Contacto 2:", contacto2Pdf],
+                ["Contacto 2:", data.contacto2Nombre || "No registrado"],
                 ["Parentesco:", data.contacto2Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto2Telefono || "No registrado"]
             ];
@@ -433,8 +407,8 @@
                 styles: { 
                     font: 'helvetica', 
                     fontSize: 9, 
-                    cellPadding: 1.5,
-                    overflow: 'linebreak'
+                    cellPadding: 1.8,
+                    overflow: 'linebreak' // Deja que el motor nativo ajuste el texto largo de manera limpia sin cortar palabras artificialmente
                 },
                 columnStyles: { 
                     0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 50 }, 
