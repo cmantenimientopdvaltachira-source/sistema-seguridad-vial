@@ -164,10 +164,10 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión dinámica por URL con detección automática del último registro -->
+    <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -217,21 +217,21 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 let motorizadoId = urlParams.get('id');
 
-                // LÓGICA AUTOMÁTICA: Si la URL no trae ?id=..., buscamos automáticamente el último registro creado en Firestore
+                // Si la URL no trae ?id=..., detectamos automáticamente el último registro creado en Firebase
                 if (!motorizadoId) {
-                    const q = query(collection(db, "motorizados"), orderBy("__name__", "desc"), limit(1));
-                    const querySnapshot = await getDocs(q);
+                    const querySnapshot = await getDocs(collection(db, "motorizados"));
                     if (!querySnapshot.empty) {
-                        motorizadoId = querySnapshot.docs[0].id;
+                        const docs = querySnapshot.docs.map(d => d.id).sort();
+                        motorizadoId = docs[docs.length - 1];
                     } else {
-                        motorizadoId = 'MOT-001'; // Respaldo por defecto
+                        motorizadoId = 'MOT-001';
                     }
                 }
 
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists() && docSnap.data().estado === "activo") {
+                if (docSnap.exists()) {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
