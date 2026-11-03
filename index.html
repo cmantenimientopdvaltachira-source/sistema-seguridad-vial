@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE SEGURIDAD (OPCIÓN 2 - INTIMIDANTE / ANTIESTAFAS) -->
+    <!-- MODAL DE SEGURIDAD -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
             <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
@@ -164,13 +164,10 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión dinámica por URL -->
+    <!-- Script principal de lógica Firebase y PDF -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const motorizadoId = urlParams.get('id') || 'MOT-001';
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -217,10 +214,23 @@
 
         async function cargarDatos() {
             try {
+                const urlParams = new URLSearchParams(window.location.search);
+                let motorizadoId = urlParams.get('id');
+
+                if (!motorizadoId) {
+                    const querySnapshot = await getDocs(collection(db, "motorizados"));
+                    if (!querySnapshot.empty) {
+                        const docs = querySnapshot.docs.map(d => d.id).sort();
+                        motorizadoId = docs[docs.length - 1];
+                    } else {
+                        motorizadoId = 'MOT-001';
+                    }
+                }
+
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists() && docSnap.data().estado === "activo") {
+                if (docSnap.exists()) {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
