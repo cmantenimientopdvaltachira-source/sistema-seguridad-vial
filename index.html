@@ -164,14 +164,10 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión dinámica por URL -->
+    <!-- Script de conexión dinámica por URL con detección automática del último registro -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Capturar automáticamente el ID desde la URL (ejemplo: ?id=MOT-002). Si no hay, usa 'MOT-001' por defecto.
-        const urlParams = new URLSearchParams(window.location.search);
-        const motorizadoId = urlParams.get('id') || 'MOT-001';
+        import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -218,6 +214,20 @@
 
         async function cargarDatos() {
             try {
+                const urlParams = new URLSearchParams(window.location.search);
+                let motorizadoId = urlParams.get('id');
+
+                // LÓGICA AUTOMÁTICA: Si la URL no trae ?id=..., buscamos automáticamente el último registro creado en Firestore
+                if (!motorizadoId) {
+                    const q = query(collection(db, "motorizados"), orderBy("__name__", "desc"), limit(1));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        motorizadoId = querySnapshot.docs[0].id;
+                    } else {
+                        motorizadoId = 'MOT-001'; // Respaldo por defecto
+                    }
+                }
+
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
