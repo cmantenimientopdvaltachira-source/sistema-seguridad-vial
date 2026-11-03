@@ -73,7 +73,7 @@
             <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
-                    <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
+                    <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM Y ASISTENCIA VIAL</span>
                     <div class="text-base text-slate-700 mt-2 space-y-1">
                         <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
                         <p>N° de Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
@@ -240,7 +240,7 @@
                     document.getElementById('cedula-usuario').innerText = data.cedula || "No registrada";
                     document.getElementById('fecha-nacimiento').innerText = data.fechaNacimiento || "No registrada";
                     document.getElementById('telefono-personal').innerText = data.telefonoPersonal || "No registrado";
-                    document.getElementById('direccion').innerText = data.direccion || "No registrado";
+                    document.getElementById('direccion').innerText = data.direccion || "No registrada";
                     
                     document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
                     document.getElementById('alergias').innerText = data.alergias || "Ninguna";
@@ -368,7 +368,7 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // Normalización estricta de espacios en los nodos objetivo para evitar estiramientos visuales
+            // Limpieza estricta de espacios redundantes manteniendo los strings idénticos
             const nombreNormalizado = String(data.nombreCompleto || "No registrado").replace(/\s+/g, ' ').trim();
             const contacto2Normalizado = String(data.contacto2Nombre || "No registrado").replace(/\s+/g, ' ').trim();
 
@@ -378,7 +378,7 @@
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
-                ["Dirección:", data.direccion || "No registrado"],
+                ["Dirección:", data.direccion || "No registrada"],
 
                 ["2. ANTECEDENTES Y PERFIL MÉDICO", ""],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
@@ -410,6 +410,7 @@
                 theme: 'plain',
                 styles: { 
                     font: 'helvetica', 
+                    fontStyle: 'normal',
                     fontSize: 9, 
                     cellPadding: 1.8,
                     overflow: 'linebreak'
@@ -417,6 +418,18 @@
                 columnStyles: { 
                     0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 50 }, 
                     1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
+                },
+                willDrawCell: function(cellData) {
+                    // Normalización estricta de la línea base tipográfica para los nodos objetivo
+                    if (cellData.section === 'body' && cellData.column.index === 1) {
+                        const rowLabel = cellData.row.raw[0];
+                        if (rowLabel === "Nombre Completo:" || rowLabel === "Contacto 2:") {
+                            doc.setFont("helvetica", "normal");
+                            doc.setFontSize(9);
+                            cellData.cell.styles.fontSize = 9;
+                            cellData.cell.styles.fontStyle = 'normal';
+                        }
+                    }
                 },
                 didParseCell: function(cellData) {
                     if (cellData.cell.text[0] && cellData.cell.text[0].match(/^[1-9]\.\s/)) {
