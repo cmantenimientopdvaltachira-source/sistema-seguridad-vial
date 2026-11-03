@@ -27,7 +27,7 @@
             <!-- BLOQUE 1 -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-base font-bold text-slate-900 mt-1">--</h2>
+                <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
                 <div class="text-base text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>N° Cédula: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE SEGURIDAD -->
+    <!-- MODAL DE SEGURIDAD (OPCIÓN 2 - INTIMIDANTE / ANTIESTAFAS) -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
             <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
@@ -164,10 +164,13 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script principal de lógica Firebase y PDF -->
+    <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const motorizadoId = urlParams.get('id') || 'MOT-001';
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -214,23 +217,10 @@
 
         async function cargarDatos() {
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                let motorizadoId = urlParams.get('id');
-
-                if (!motorizadoId) {
-                    const querySnapshot = await getDocs(collection(db, "motorizados"));
-                    if (!querySnapshot.empty) {
-                        const docs = querySnapshot.docs.map(d => d.id).sort();
-                        motorizadoId = docs[docs.length - 1];
-                    } else {
-                        motorizadoId = 'MOT-001';
-                    }
-                }
-
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
+                if (docSnap.exists() && docSnap.data().estado === "activo") {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
@@ -252,15 +242,20 @@
                     document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
                     // Contacto 2
-                    document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre || "No registrado";
-                    document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
+                    const contacto2Bloque = document.getElementById('contenedor-contacto-2');
+                    if (data.contacto2Nombre) {
+                        contacto2Bloque.style.display = 'block';
+                        document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
+                        document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
+                    } else {
+                        contacto2Bloque.style.display = 'none';
+                    }
                     
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
                     document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
-                    // Botón Seguro
                     const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
                     const btnSeguro = document.getElementById('btn-seguro');
                     if (telefonoSeguro) {
@@ -270,7 +265,6 @@
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    // Botones Contacto 1
                     const tel1 = data.contacto1Telefono;
                     const btnLlamar1 = document.getElementById('btn-llamar-1');
                     if (tel1) {
@@ -295,7 +289,6 @@
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botones Contacto 2
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
@@ -341,7 +334,6 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // Encabezado del PDF
             doc.setFont("helvetica", "bold");
             doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
@@ -368,75 +360,51 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            const nombreCarlosNormalizado = String(data.nombreCompleto || "No registrado").replace(/\s+/g, ' ').trim();
-            const contacto2Normalizado = String(data.contacto2Nombre || "No registrado").replace(/\s+/g, ' ').trim();
-
             let cuerpoTabla = [
-                ["1. DATOS PERSONALES DEL CIUDADANO", ""],
-                ["Nombre Completo:", nombreCarlosNormalizado],
+                [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                ["Nombre Completo:", data.nombreCompleto || "No registrado"],
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
                 ["Dirección:", data.direccion || "No registrada"],
 
-                ["2. ANTECEDENTES Y PERFIL MÉDICO", ""],
+                [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
                 ["Alergias Conocidas:", data.alergias || "Ninguna"],
                 ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                 ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                ["3. DATOS DEL VEHÍCULO", ""],
+                [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Placa:", data.placaVehiculo || "No registrado"],
                 ["Tipo de Vehículo:", vehiculoPdfFinal],
 
-                ["4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", ""],
+                [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                 ["N° de Póliza:", data.nroPoliza || "No registrado"],
                 ["Teléfono Asistencia:", telefonoSeguroPdf],
 
-                ["5. CONTACTOS DE EMERGENCIA NOTIFICADOS", ""],
+                [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Contacto 1:", data.contacto1Nombre || "No registrado"],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
-                ["Teléfono:", data.contacto1Telefono || "No registrado"],
-                ["Contacto 2:", contacto2Normalizado],
-                ["Parentesco:", data.contacto2Parentesco || "No especificado"],
-                ["Teléfono:", data.contacto2Telefono || "No registrado"]
+                ["Teléfono:", data.contacto1Telefono || "No registrado"]
             ];
+
+            if (data.contacto2Nombre) {
+                cuerpoTabla.push(
+                    ["Contacto 2:", data.contacto2Nombre],
+                    ["Parentesco:", data.contacto2Parentesco || "No especificado"],
+                    ["Teléfono:", data.contacto2Telefono || "No registrado"]
+                );
+            }
 
             doc.autoTable({
                 startY: 28,
                 body: cuerpoTabla,
                 theme: 'plain',
-                styles: { 
-                    font: 'helvetica', 
-                    fontStyle: 'normal',
-                    fontSize: 9, 
-                    cellPadding: 1.8,
-                    overflow: 'linebreak'
-                },
+                styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
                 columnStyles: { 
-                    0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 50 }, 
-                    1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
-                },
-                willDrawCell: function(cellData) {
-                    if (cellData.section === 'body' && cellData.column.index === 1) {
-                        if (cellData.row.raw[0] === "Nombre Completo:") {
-                            doc.setFont("helvetica", "normal");
-                            doc.setFontSize(9);
-                            cellData.cell.styles.fontSize = 9;
-                            cellData.cell.styles.fontStyle = 'normal';
-                            cellData.cell.text = [nombreCarlosNormalizado];
-                        }
-                    }
-                },
-                didParseCell: function(cellData) {
-                    if (cellData.cell.text[0] && cellData.cell.text[0].match(/^[1-9]\.\s/)) {
-                        cellData.cell.colSpan = 2;
-                        cellData.cell.styles.fillColor = [241, 245, 249];
-                        cellData.cell.styles.textColor = [51, 65, 85];
-                        cellData.cell.styles.fontStyle = 'bold';
-                        cellData.cell.styles.fontSize = 8.5;
-                    }
+                    0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 45 }, 
+                    1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 135 } 
                 },
                 margin: { left: 15, right: 15 }
             });
