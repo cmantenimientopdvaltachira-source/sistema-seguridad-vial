@@ -107,7 +107,7 @@
                     </div>
                 </div>
 
-                <!-- Contacto 2 -->
+                <!-- Contacto 2 (Siempre visible y funcional) -->
                 <div id="contenedor-contacto-2" class="space-y-2 pt-1">
                     <div>
                         <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Contacto Secundario</span>
@@ -164,7 +164,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión dinámica con Contacto 2 y Auto-detección -->
+    <!-- Script de conexión con ambos contactos garantizados -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -252,15 +252,9 @@
                     document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
                     document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
-                    // Contacto 2 (Restaurado dinámicamente)
-                    const contacto2Bloque = document.getElementById('contenedor-contacto-2');
-                    if (data.contacto2Nombre) {
-                        contacto2Bloque.style.display = 'block';
-                        document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
-                        document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
-                    } else {
-                        contacto2Bloque.style.display = 'none';
-                    }
+                    // Contacto 2 (Siempre visible mapeando los campos originales)
+                    document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre || "No registrado";
+                    document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
                     
                     document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
                     document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
@@ -400,16 +394,11 @@
                 [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Contacto 1:", data.contacto1Nombre || "No registrado"],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
-                ["Teléfono:", data.contacto1Telefono || "No registrado"]
+                ["Teléfono:", data.contacto1Telefono || "No registrado"],
+                ["Contacto 2:", data.contacto2Nombre || "No registrado"],
+                ["Parentesco:", data.contacto2Parentesco || "No especificado"],
+                ["Teléfono:", data.contacto2Telefono || "No registrado"]
             ];
-
-            if (data.contacto2Nombre) {
-                cuerpoTabla.push(
-                    ["Contacto 2:", data.contacto2Nombre],
-                    ["Parentesco:", data.contacto2Parentesco || "No especificado"],
-                    ["Teléfono:", data.contacto2Telefono || "No registrado"]
-                );
-            }
 
             doc.autoTable({
                 startY: 28,
