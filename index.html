@@ -164,7 +164,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script principal de lógica Firebase y PDF -->
+    <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -230,7 +230,7 @@
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
+                if (docSnap.exists() && docSnap.data().estado === "activo") {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
@@ -302,6 +302,7 @@
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
+                        btnLlassar2 = true; // safe check
                         btnLlamar2.classList.remove('opacity-50', 'pointer-events-none');
                         btnLlamar2.onclick = () => openEmergencyModal(tel2);
                     } else {
