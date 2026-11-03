@@ -212,6 +212,26 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
+        // Función inteligente para evitar que nombres largos compriman la fuente en el PDF
+        function formatearTextoLargo(texto, maxLen = 23) {
+            if (!texto) return "No registrado";
+            let s = String(texto).trim();
+            if (s.length <= maxLen) return s;
+            let palabras = s.split(" ");
+            let lineas = [];
+            let lineaActual = "";
+            for (let p of palabras) {
+                if ((lineaActual + " " + p).trim().length <= maxLen) {
+                    lineaActual = (lineaActual + " " + p).trim();
+                } else {
+                    if (lineaActual) lineas.push(lineaActual);
+                    lineaActual = p;
+                }
+            }
+            if (lineaActual) lineas.push(lineaActual);
+            return lineas.length > 1 ? lineas : s;
+        }
+
         async function cargarDatos() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -341,7 +361,7 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // Encabezado de la página
+            // Encabezado del PDF
             doc.setFont("helvetica", "bold");
             doc.setFontSize(13);
             doc.setTextColor(220, 38, 38);
@@ -368,40 +388,40 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // NUEVA ESTRUCTURA: Tabla plana estricta sin filas mezcladas de colSpan que alteren la escala
+            // Aplicar pre-procesamiento seguro a nombres largos y direcciones
+            const nombrePdf = formatearTextoLargo(data.nombreCompleto, 24);
+            const contacto1Pdf = formatearTextoLargo(data.contacto1Nombre, 24);
+            const contacto2Pdf = formatearTextoLargo(data.contacto2Nombre, 24);
+            const direccionPdf = formatearTextoLargo(data.direccion, 28);
+
             let cuerpoTabla = [
-                // Sección 1
                 ["1. DATOS PERSONALES DEL CIUDADANO", ""],
-                ["Nombre Completo:", data.nombreCompleto || "No registrado"],
+                ["Nombre Completo:", nombrePdf],
                 ["N° Cédula:", data.cedula || "No registrada"],
                 ["Fecha de Nacimiento:", data.fechaNacimiento || "No registrada"],
                 ["Teléfono Personal:", data.telefonoPersonal || "No registrado"],
-                ["Dirección:", data.direccion || "No registrada"],
+                ["Dirección:", direccionPdf],
 
-                // Sección 2
                 ["2. ANTECEDENTES Y PERFIL MÉDICO", ""],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
                 ["Alergias Conocidas:", data.alergias || "Ninguna"],
                 ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                 ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
-                // Sección 3
                 ["3. DATOS DEL VEHÍCULO", ""],
                 ["Placa:", data.placaVehiculo || "No registrado"],
                 ["Tipo de Vehículo:", vehiculoPdfFinal],
 
-                // Sección 4
                 ["4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", ""],
                 ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                 ["N° de Póliza:", data.nroPoliza || "No registrado"],
                 ["Teléfono Asistencia:", telefonoSeguroPdf],
 
-                // Sección 5
                 ["5. CONTACTOS DE EMERGENCIA NOTIFICADOS", ""],
-                ["Contacto 1:", data.contacto1Nombre || "No registrado"],
+                ["Contacto 1:", contacto1Pdf],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto1Telefono || "No registrado"],
-                ["Contacto 2:", data.contacto2Nombre || "No registrado"],
+                ["Contacto 2:", contacto2Pdf],
                 ["Parentesco:", data.contacto2Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto2Telefono || "No registrado"]
             ];
@@ -412,17 +432,16 @@
                 theme: 'plain',
                 styles: { 
                     font: 'helvetica', 
-                    fontSize: 9,              // Tamaño de letra estrictamente idéntico y fijo para todo
+                    fontSize: 9, 
                     cellPadding: 1.5,
-                    overflow: 'linebreak',
-                    cellWidth: 'fixed'
+                    overflow: 'linebreak'
                 },
                 columnStyles: { 
-                    0: { cellWidth: 50 }, 
-                    1: { cellWidth: 130 } 
+                    0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 50 }, 
+                    1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 130 } 
                 },
-                // Función inteligente para pintar las filas de títulos de sección en gris claro sin alterar las fuentes
                 didParseCell: function(data) {
+                    // Pintar y unificar las filas de títulos de sección en gris claro
                     if (data.cell.text[0] && data.cell.text[0].match(/^[1-9]\.\s/)) {
                         data.cell.colSpan = 2;
                         data.cell.styles.fillColor = [241, 245, 249];
