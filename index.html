@@ -167,11 +167,7 @@
     <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Capturar automáticamente el ID desde la URL (ejemplo: ?id=MOT-003). Si no hay, usa 'MOT-001' por defecto.
-        const urlParams = new URLSearchParams(window.location.search);
-        const motorizadoId = urlParams.get('id') || 'MOT-001';
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -218,9 +214,23 @@
 
         async function cargarDatos() {
             try {
+                const urlParams = new URLSearchParams(window.location.search);
+                let motorizadoId = urlParams.get('id');
+
+                if (!motorizadoId) {
+                    const querySnapshot = await getDocs(collection(db, "motorizados"));
+                    if (!querySnapshot.empty) {
+                        const docs = querySnapshot.docs.map(d => d.id).sort();
+                        motorizadoId = docs[docs.length - 1];
+                    } else {
+                        motorizadoId = 'MOT-001';
+                    }
+                }
+
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
+                // CORRECCIÓN: Se elimina la validación estricta de 'estado === "activo"' para que cargue el documento correctamente
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
@@ -257,7 +267,6 @@
                     document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
                     document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
-                    // Botón Seguro
                     const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
                     const btnSeguro = document.getElementById('btn-seguro');
                     if (telefonoSeguro) {
@@ -267,7 +276,6 @@
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    // Botones Contacto 1 (Con modal de seguridad)
                     const tel1 = data.contacto1Telefono;
                     const btnLlamar1 = document.getElementById('btn-llamar-1');
                     if (tel1) {
@@ -292,7 +300,6 @@
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botones Contacto 2 (Con modal de seguridad)
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
