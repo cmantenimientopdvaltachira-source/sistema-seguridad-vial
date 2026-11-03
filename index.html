@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE SEGURIDAD (OPCIÓN 2 - INTIMIDANTE / ANTIESTAFAS) -->
+    <!-- MODAL DE SEGURIDAD -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
             <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
@@ -164,7 +164,7 @@
         RB-Emergencia Vial &bull; Ámbito Nacional
     </footer>
 
-    <!-- Script de conexión dinámica por URL -->
+    <!-- Script de conexión dinámica con Contacto 2 y Auto-detección -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -217,7 +217,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 let motorizadoId = urlParams.get('id');
 
-                // Si la URL no trae ?id=..., detectamos automáticamente el último registro creado en Firebase
+                // Detección automática del último registro si no hay ID en la URL
                 if (!motorizadoId) {
                     const querySnapshot = await getDocs(collection(db, "motorizados"));
                     if (!querySnapshot.empty) {
@@ -252,7 +252,7 @@
                     document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
                     document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
-                    // Contacto 2
+                    // Contacto 2 (Restaurado dinámicamente)
                     const contacto2Bloque = document.getElementById('contenedor-contacto-2');
                     if (data.contacto2Nombre) {
                         contacto2Bloque.style.display = 'block';
@@ -277,7 +277,7 @@
                         btnSeguro.classList.add('opacity-50', 'pointer-events-none');
                     }
 
-                    // Botones Contacto 1 (Con modal de seguridad)
+                    // Botones Contacto 1
                     const tel1 = data.contacto1Telefono;
                     const btnLlamar1 = document.getElementById('btn-llamar-1');
                     if (tel1) {
@@ -302,7 +302,7 @@
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
 
-                    // Botones Contacto 2 (Con modal de seguridad)
+                    // Botones Contacto 2
                     const tel2 = data.contacto2Telefono;
                     const btnLlamar2 = document.getElementById('btn-llamar-2');
                     if (tel2) {
