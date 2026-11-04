@@ -167,7 +167,7 @@
     <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -212,24 +212,20 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-                async function cargarDatos() {
+        async function cargarDatos() {
             try {
                 let docSnap = null;
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
 
                 if (hashId) {
-                    // Si el usuario puso un ID en el enlace (ej: #MOT-001), busca ese exacto
+                    // Si la URL tiene hash (ej: #MOT-001), busca exactamente ese documento con getDoc
                     const docRef = doc(db, "motorizados", hashId);
                     docSnap = await getDoc(docRef);
                 } else {
-                    // Solución automática: Traemos todos los documentos disponibles
+                    // Si la URL está limpia (sin hash), obtiene todos los documentos y selecciona el último de forma segura sin requerir índices complejos
                     const querySnapshot = await getDocs(collection(db, "motorizados"));
                     if (!querySnapshot.empty) {
                         const docs = querySnapshot.docs;
-                        
-                        // Buscamos de manera inteligente el último registro basándonos 
-                        // en el orden natural de la base de datos o el último creado/modificado.
-                        // Tomamos el último elemento de la lista cargada.
                         docSnap = docs[docs.length - 1];
                     }
                 }
@@ -322,7 +318,7 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCentCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
@@ -339,7 +335,6 @@
                 mostrarError();
             }
         }
-
 
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
