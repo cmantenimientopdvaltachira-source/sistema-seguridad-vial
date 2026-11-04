@@ -167,7 +167,8 @@
     <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 
                 // Detecta el ID usando hash (ej: .../sistema-seguridad-vial/#MOT-002); si no hay hash, carga MOT-002 por defecto para tus revisiones
         const motorizadoId = window.location.hash ? window.location.hash.substring(1) : 'MOT-002';
