@@ -175,7 +175,7 @@
 
 
 
-        let datosFichaGlobal = null; 
+                let datosFichaGlobal = null; 
         let latitudActual = null;
         let longitudActual = null;
         let numeroTelefonicoPendiente = "";
@@ -220,10 +220,23 @@
 
         async function cargarDatos() {
             try {
-                const docRef = doc(db, "motorizados", motorizadoId);
-                const docSnap = await getDoc(docRef);
+                let docSnap = null;
+                const hashId = window.location.hash ? window.location.hash.substring(1) : null;
 
-                if (docSnap.exists()) {
+                if (hashId) {
+                    // Si el usuario puso un ID en el enlace (ej: #MOT-003), busca ese exacto
+                    const docRef = doc(db, "motorizados", hashId);
+                    docSnap = await getDoc(docRef);
+                } else {
+                    // Si el enlace está limpio, busca automáticamente el último registro creado/actualizado en Firebase
+                    const q = query(collection(db, "motorizados"), orderBy("__name__", "desc"), limit(1));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        docSnap = querySnapshot.docs[0];
+                    }
+                }
+
+                if (docSnap && docSnap.exists()) {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
                     
@@ -328,6 +341,7 @@
                 mostrarError();
             }
         }
+
 
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
