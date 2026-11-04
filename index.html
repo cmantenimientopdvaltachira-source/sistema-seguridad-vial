@@ -167,7 +167,10 @@
     <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const motorizadoId = urlParams.get('id') || 'MOT-001';
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
@@ -214,23 +217,9 @@
 
         async function cargarDatos() {
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                let motorizadoId = urlParams.get('id');
-
-                if (!motorizadoId) {
-                    const querySnapshot = await getDocs(collection(db, "motorizados"));
-                    if (!querySnapshot.empty) {
-                        const docs = querySnapshot.docs.map(d => d.id).sort();
-                        motorizadoId = docs[docs.length - 1];
-                    } else {
-                        motorizadoId = 'MOT-001';
-                    }
-                }
-
                 const docRef = doc(db, "motorizados", motorizadoId);
                 const docSnap = await getDoc(docRef);
 
-                // CORRECCIÓN: Se elimina la validación estricta de 'estado === "activo"' para que cargue el documento correctamente
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     datosFichaGlobal = data; 
@@ -434,14 +423,16 @@
                 const pdfDataUri = doc.output('datauristring');
                 const enlaceDescarga = document.createElement('a');
                 enlaceDescarga.href = pdfDataUri;
-                enlaceDescarga.download = `Ficha_Medica_${data.cedula || 'Oficial'}.pdf`;
+                const nombreArchivoLimpio = data.cedula ? data.cedula.replace(/[^a-zA-Z0-9-_]/g, '_') : 'Oficial';
+                enlaceDescarga.download = `Ficha_Medica_${nombreArchivoLimpio}.pdf`;
                 enlaceDescarga.target = '_blank';
                 document.body.appendChild(enlaceDescarga);
                 enlaceDescarga.click();
                 document.body.removeChild(enlaceDescarga);
             } catch (error) {
                 console.error("Error al exportar PDF:", error);
-                doc.save(`Ficha_Medica_${data.cedula || 'Oficial'}.pdf`);
+                const nombreArchivoLimpio = data.cedula ? data.cedula.replace(/[^a-zA-Z0-9-_]/g, '_') : 'Oficial';
+                doc.save(`Ficha_Medica_${nombreArchivoLimpio}.pdf`);
             }
         });
 
