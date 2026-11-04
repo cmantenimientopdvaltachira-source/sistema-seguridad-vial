@@ -218,21 +218,22 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-        async function cargarDatos() {
+                async function cargarDatos() {
             try {
                 let docSnap = null;
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
 
                 if (hashId) {
-                    // Si el usuario puso un ID en el enlace (ej: #MOT-003), busca ese exacto
+                    // Si el usuario puso un ID en el enlace (ej: #MOT-002), busca ese exacto
                     const docRef = doc(db, "motorizados", hashId);
                     docSnap = await getDoc(docRef);
                 } else {
-                    // Si el enlace está limpio, busca automáticamente el último registro creado/actualizado en Firebase
-                    const q = query(collection(db, "motorizados"), orderBy("__name__", "desc"), limit(1));
-                    const querySnapshot = await getDocs(q);
+                    // Si el enlace está limpio, traemos todos y tomamos el último de manera segura sin requerir índices complejos
+                    const querySnapshot = await getDocs(collection(db, "motorizados"));
                     if (!querySnapshot.empty) {
-                        docSnap = querySnapshot.docs[0];
+                        const docs = querySnapshot.docs;
+                        // Selecciona el último documento cargado en la colección
+                        docSnap = docs[docs.length - 1];
                     }
                 }
 
@@ -341,6 +342,7 @@
                 mostrarError();
             }
         }
+
 
 
         const btnPdf = document.getElementById('btn-pdf');
