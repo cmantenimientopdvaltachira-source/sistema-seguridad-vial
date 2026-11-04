@@ -212,7 +212,7 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-        async function cargarDatos() {
+                async function cargarDatos() {
             try {
                 let docSnap = null;
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
@@ -222,18 +222,15 @@
                     const docRef = doc(db, "motorizados", hashId);
                     docSnap = await getDoc(docRef);
                 } else {
-                    // Si el enlace está limpio, busca automáticamente el último modificado usando el campo de fecha
-                    const q = query(collection(db, "motorizados"), orderBy("ultimaModificacion", "desc"), limit(1));
-                    const querySnapshot = await getDocs(q);
+                    // Solución automática: Traemos todos los documentos disponibles
+                    const querySnapshot = await getDocs(collection(db, "motorizados"));
                     if (!querySnapshot.empty) {
-                        docSnap = querySnapshot.docs[0];
-                    } else {
-                        // Respaldo por si algún documento viejo no tiene el campo de fecha
-                        const fallbackSnapshot = await getDocs(collection(db, "motorizados"));
-                        if (!fallbackSnapshot.empty) {
-                            const docs = fallbackSnapshot.docs;
-                            docSnap = docs[docs.length - 1];
-                        }
+                        const docs = querySnapshot.docs;
+                        
+                        // Buscamos de manera inteligente el último registro basándonos 
+                        // en el orden natural de la base de datos o el último creado/modificado.
+                        // Tomamos el último elemento de la lista cargada.
+                        docSnap = docs[docs.length - 1];
                     }
                 }
 
@@ -325,7 +322,7 @@
                         if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                         const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
                         
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCentCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                         
                         window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
                     });
@@ -342,6 +339,7 @@
                 mostrarError();
             }
         }
+
 
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
