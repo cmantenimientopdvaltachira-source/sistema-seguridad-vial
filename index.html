@@ -169,13 +169,7 @@
         import { db } from "./firebase-config.js";
         import { doc, getDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-
-                // Detecta el ID usando hash (ej: .../sistema-seguridad-vial/#MOT-002); si no hay hash, carga MOT-002 por defecto para tus revisiones
-        const motorizadoId = window.location.hash ? window.location.hash.substring(1) : 'MOT-002';
-
-
-
-                let datosFichaGlobal = null; 
+        let datosFichaGlobal = null; 
         let latitudActual = null;
         let longitudActual = null;
         let numeroTelefonicoPendiente = "";
@@ -218,22 +212,28 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-                async function cargarDatos() {
+        async function cargarDatos() {
             try {
                 let docSnap = null;
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
 
                 if (hashId) {
-                    // Si el usuario puso un ID en el enlace (ej: #MOT-002), busca ese exacto
+                    // Si el usuario puso un ID en el enlace (ej: #MOT-001), busca ese exacto
                     const docRef = doc(db, "motorizados", hashId);
                     docSnap = await getDoc(docRef);
                 } else {
-                    // Si el enlace está limpio, traemos todos y tomamos el último de manera segura sin requerir índices complejos
-                    const querySnapshot = await getDocs(collection(db, "motorizados"));
+                    // Si el enlace está limpio, busca automáticamente el último modificado usando el campo de fecha
+                    const q = query(collection(db, "motorizados"), orderBy("ultimaModificacion", "desc"), limit(1));
+                    const querySnapshot = await getDocs(q);
                     if (!querySnapshot.empty) {
-                        const docs = querySnapshot.docs;
-                        // Selecciona el último documento cargado en la colección
-                        docSnap = docs[docs.length - 1];
+                        docSnap = querySnapshot.docs[0];
+                    } else {
+                        // Respaldo por si algún documento viejo no tiene el campo de fecha
+                        const fallbackSnapshot = await getDocs(collection(db, "motorizados"));
+                        if (!fallbackSnapshot.empty) {
+                            const docs = fallbackSnapshot.docs;
+                            docSnap = docs[docs.length - 1];
+                        }
                     }
                 }
 
@@ -342,8 +342,6 @@
                 mostrarError();
             }
         }
-
-
 
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
