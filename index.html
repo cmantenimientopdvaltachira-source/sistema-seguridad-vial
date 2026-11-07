@@ -86,7 +86,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA (1 Y 2) -->
+            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
                 <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contactos de Emergencia</span>
                 
@@ -146,7 +146,36 @@
         </div>
     </div>
 
-    <!-- MODAL DE SEGURIDAD -->
+    <!-- MODAL BUSCADOR PRIVADO ADMIN -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4 border border-slate-200">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🔍 Verificación Privada de Fichas</h3>
+                <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
+            </div>
+            <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para cargar y verificar los datos en el panel antes de imprimir tu QR.</p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar por ID o Cédula</label>
+                    <input type="text" id="adminSearchInput" placeholder="Ej: MOT-001 o V-18456789" class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <button type="button" id="btnAdminSearch" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-sm">
+                    🔎 Buscar y Cargar Ficha
+                </button>
+                <div id="adminSearchError" class="text-xs font-bold text-red-600 text-center hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTÓN DISCRETO SOLO PARA ADMIN EN FOOTER -->
+    <footer class="text-center text-xs text-slate-400 py-4 flex flex-col items-center gap-2">
+        <span>RB-Emergencia Vial &bull; Ámbito Nacional</span>
+        <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-slate-600 text-[10px] underline cursor-pointer">
+            🔒 Modo Administrador
+        </button>
+    </footer>
+
+    <!-- MODAL DE SEGURIDAD LLAMADAS -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
             <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
@@ -160,19 +189,76 @@
         </div>
     </div>
 
-    <footer class="text-center text-xs text-slate-400 py-4">
-        RB-Emergencia Vial &bull; Ámbito Nacional
-    </footer>
-
     <!-- Script de conexión dinámica por URL -->
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         let datosFichaGlobal = null; 
         let latitudActual = null;
         let longitudActual = null;
         let numeroTelefonicoPendiente = "";
+
+        // Funciones Modal Admin Privado
+        window.openAdminModal = function() {
+            document.getElementById('adminModal').style.display = 'flex';
+            document.getElementById('adminSearchInput').focus();
+        }
+
+        window.closeAdminModal = function() {
+            document.getElementById('adminModal').style.display = 'none';
+            document.getElementById('adminSearchError').classList.add('hidden');
+        }
+
+        // Acceso por teclado rápido: Ctrl + Shift + A
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                openAdminModal();
+            }
+        });
+
+        // Búsqueda administrada directa en Firestore
+        document.getElementById('btnAdminSearch').addEventListener('click', async () => {
+            const queryValue = document.getElementById('adminSearchInput').value.trim();
+            const errorDiv = document.getElementById('adminSearchError');
+            errorDiv.classList.add('hidden');
+
+            if (!queryValue) {
+                errorDiv.innerText = "Por favor, ingresa un ID o Cédula.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('ficha-container').classList.add('hidden');
+            document.getElementById('error-container').classList.add('hidden');
+            closeAdminModal();
+
+            try {
+                // 1. Intentar buscar por ID directo de documento (ej: MOT-001)
+                const docRef = doc(db, "motorizados", queryValue);
+                let docSnap = await getDoc(docRef);
+
+                // 2. Si no lo encuentra por ID, busca por la cédula
+                if (!docSnap.exists()) {
+                    const q = query(collection(db, "motorizados"), where("cedula", "==", queryValue), limit(1));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        docSnap = querySnapshot.docs[0];
+                    }
+                }
+
+                if (docSnap && docSnap.exists()) {
+                    renderizarFicha(docSnap.data());
+                } else {
+                    mostrarError();
+                }
+            } catch (err) {
+                console.error("Error en búsqueda privada:", err);
+                mostrarError();
+            }
+        });
 
         window.openEmergencyModal = function(numero) {
             if (!numero) return;
@@ -212,123 +298,107 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
+        function renderizarFicha(data) {
+            datosFichaGlobal = data; 
+            const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
+
+            document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
+            document.getElementById('cedula-usuario').innerText = data.cedula || "No registrada";
+            document.getElementById('fecha-nacimiento').innerText = data.fechaNacimiento || "No registrada";
+            document.getElementById('telefono-personal').innerText = data.telefonoPersonal || "No registrado";
+            document.getElementById('direccion').innerText = data.direccion || "No registrada";
+            
+            document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
+            document.getElementById('alergias').innerText = data.alergias || "Ninguna";
+            document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
+            document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
+            
+            // Contacto 1
+            document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
+            document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
+
+            // Contacto 2
+            const contacto2Bloque = document.getElementById('contenedor-contacto-2');
+            if (data.contacto2Nombre) {
+                contacto2Bloque.style.display = 'block';
+                document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
+                document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
+            } else {
+                contacto2Bloque.style.display = 'none';
+            }
+            
+            document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
+            document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
+            document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
+            document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
+
+            const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
+            const btnSeguro = document.getElementById('btn-seguro');
+            if (telefonoSeguro) {
+                btnSeguro.classList.remove('opacity-50', 'pointer-events-none');
+                btnSeguro.setAttribute('href', `tel:${telefonoSeguro.replace(/\D/g, '')}`);
+            } else {
+                btnSeguro.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            const tel1 = data.contacto1Telefono;
+            const btnLlamar1 = document.getElementById('btn-llamar-1');
+            if (tel1) {
+                btnLlamar1.classList.remove('opacity-50', 'pointer-events-none');
+                btnLlamar1.onclick = () => openEmergencyModal(tel1);
+            } else {
+                btnLlamar1.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            document.getElementById('btn-whatsapp-1').onclick = (e) => {
+                e.preventDefault();
+                if (!tel1) { alert("Teléfono de contacto 1 no disponible."); return; }
+                let telWp = tel1.replace(/\D/g,'');
+                if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
+                const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
+                const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
+            };
+
+            const tel2 = data.contacto2Telefono;
+            const btnLlamar2 = document.getElementById('btn-llamar-2');
+            if (tel2) {
+                btnLlamar2.classList.remove('opacity-50', 'pointer-events-none');
+                btnLlamar2.onclick = () => openEmergencyModal(tel2);
+            } else {
+                btnLlamar2.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            document.getElementById('btn-whatsapp-2').onclick = (e) => {
+                e.preventDefault();
+                if (!tel2) { alert("Teléfono de contacto 2 no disponible."); return; }
+                let telWp = tel2.replace(/\D/g,'');
+                if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
+                const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
+                const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
+            };
+
+            document.getElementById('btn-171').setAttribute('href', 'tel:171');
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('ficha-container').classList.remove('hidden');
+        }
+
         async function cargarDatos() {
             try {
-                let docSnap = null;
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
-
                 if (hashId) {
-                    // Si la URL tiene hash (ej: #MOT-001), busca exactamente ese documento con getDoc
                     const docRef = doc(db, "motorizados", hashId);
-                    docSnap = await getDoc(docRef);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        renderizarFicha(docSnap.data());
+                    } else {
+                        mostrarError();
+                    }
                 } else {
-                    // Si la URL está limpia (sin hash), obtiene todos los documentos y selecciona el último de forma segura sin requerir índices complejos
-                    const querySnapshot = await getDocs(collection(db, "motorizados"));
-                    if (!querySnapshot.empty) {
-                        const docs = querySnapshot.docs;
-                        docSnap = docs[docs.length - 1];
-                    }
-                }
-
-                if (docSnap && docSnap.exists()) {
-                    const data = docSnap.data();
-                    datosFichaGlobal = data; 
-                    
-                    const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
-
-                    document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
-                    document.getElementById('cedula-usuario').innerText = data.cedula || "No registrada";
-                    document.getElementById('fecha-nacimiento').innerText = data.fechaNacimiento || "No registrada";
-                    document.getElementById('telefono-personal').innerText = data.telefonoPersonal || "No registrado";
-                    document.getElementById('direccion').innerText = data.direccion || "No registrada";
-                    
-                    document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
-                    document.getElementById('alergias').innerText = data.alergias || "Ninguna";
-                    document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
-                    document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
-                    
-                    // Contacto 1
-                    document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
-                    document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
-
-                    // Contacto 2
-                    const contacto2Bloque = document.getElementById('contenedor-contacto-2');
-                    if (data.contacto2Nombre) {
-                        contacto2Bloque.style.display = 'block';
-                        document.getElementById('contacto2-nombre').innerText = data.contacto2Nombre;
-                        document.getElementById('contacto2-parentesco').innerText = data.contacto2Parentesco || "No especificado";
-                    } else {
-                        contacto2Bloque.style.display = 'none';
-                    }
-                    
-                    document.getElementById('placa-vehiculo').innerText = data.placaVehiculo || "Sin placa";
-                    document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
-                    document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
-                    document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
-
-                    const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
-                    const btnSeguro = document.getElementById('btn-seguro');
-                    if (telefonoSeguro) {
-                        btnSeguro.classList.remove('opacity-50', 'pointer-events-none');
-                        btnSeguro.setAttribute('href', `tel:${telefonoSeguro.replace(/\D/g, '')}`);
-                    } else {
-                        btnSeguro.classList.add('opacity-50', 'pointer-events-none');
-                    }
-
-                    const tel1 = data.contacto1Telefono;
-                    const btnLlamar1 = document.getElementById('btn-llamar-1');
-                    if (tel1) {
-                        btnLlamar1.classList.remove('opacity-50', 'pointer-events-none');
-                        btnLlamar1.onclick = () => openEmergencyModal(tel1);
-                    } else {
-                        btnLlamar1.classList.add('opacity-50', 'pointer-events-none');
-                    }
-
-                    document.getElementById('btn-whatsapp-1').addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (!tel1) {
-                            alert("Teléfono de contacto 1 no disponible.");
-                            return;
-                        }
-                        let telWp = tel1.replace(/\D/g,'');
-                        if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
-                        const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                        
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
-                        
-                        window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
-                    });
-
-                    const tel2 = data.contacto2Telefono;
-                    const btnLlamar2 = document.getElementById('btn-llamar-2');
-                    if (tel2) {
-                        btnLlamar2.classList.remove('opacity-50', 'pointer-events-none');
-                        btnLlamar2.onclick = () => openEmergencyModal(tel2);
-                    } else {
-                        btnLlamar2.classList.add('opacity-50', 'pointer-events-none');
-                    }
-
-                    document.getElementById('btn-whatsapp-2').addEventListener('click', (e) => {
-                        e.preventDefault();
-                        if (!tel2) {
-                            alert("Teléfono de contacto 2 no disponible.");
-                            return;
-                        }
-                        let telWp = tel2.replace(/\D/g,'');
-                        if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
-                        const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                        
-                        const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
-                        
-                        window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
-                    });
-
-                    document.getElementById('btn-171').setAttribute('href', 'tel:171');
-
+                    // Si entra sin hash, abre directamente el panel de búsqueda rápida
                     document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('ficha-container').classList.remove('hidden');
-                } else {
-                    mostrarError();
+                    openAdminModal();
                 }
             } catch (error) {
                 console.error("Error al cargar:", error);
@@ -339,7 +409,6 @@
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
             if (!datosFichaGlobal) return;
-
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
@@ -420,7 +489,6 @@
             });
 
             const finalY = doc.lastAutoTable.finalY + 4;
-
             doc.setDrawColor(203, 213, 225);
             doc.line(15, finalY, 195, finalY);
             doc.setFont("helvetica", "normal");
