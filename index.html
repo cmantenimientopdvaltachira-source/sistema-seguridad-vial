@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div class="pt-1">
-                    <a id="btn-seguro" href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                    <a id="btn-seguro" href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         📞 Contactar Asistencia y HCM 24/7
                     </a>
                 </div>
@@ -114,15 +114,15 @@
                 <!-- Contacto 1 -->
                 <div class="border-b border-slate-200 pb-3 space-y-2">
                     <div>
-                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Contacto Principal</span>
+                        <span class="block text-base text-red-900 font-medium">CONTACTO PRINCIPAL</span>
                         <h3 id="contacto1-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
-                        <p class="text-sm text-slate-700">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
+                        <p class="text-base text-red-900 font-medium">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
-                        <button id="btn-llamar-1" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <button id="btn-llamar-1" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                             📞 Llamar al Contacto 1
                         </button>
-                        <a id="btn-whatsapp-1" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                        <a id="btn-whatsapp-1" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                             💬 Enviar Alerta WhatsApp 1 (Con GPS)
                         </a>
                     </div>
@@ -131,15 +131,15 @@
                 <!-- Contacto 2 -->
                 <div id="contenedor-contacto-2" class="space-y-2 pt-1">
                     <div>
-                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wide">Contacto Secundario</span>
+                        <span class="block text-base text-red-900 font-medium">CONTACTO SECUNDARIO</span>
                         <h3 id="contacto2-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
-                        <p class="text-sm text-slate-700">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
+                        <p class="text-base text-red-900 font-medium">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
-                        <button id="btn-llamar-2" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <button id="btn-llamar-2" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                             📞 Llamar al Contacto 2
                         </button>
-                        <a id="btn-whatsapp-2" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-2.5 px-4 rounded-xl shadow transition duration-200 text-sm flex items-center justify-center gap-2">
+                        <a id="btn-whatsapp-2" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                             💬 Enviar Alerta WhatsApp 2 (Con GPS)
                         </a>
                     </div>
@@ -155,10 +155,13 @@
                 </a>
             </div>
 
-            <!-- BOTÓN PÚBLICO DESCARGA PDF -->
-            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
-                📄 Descargar Ficha en PDF
-            </button>
+            <!-- SECCIÓN Y BOTÓN PÚBLICO DESCARGA PDF -->
+            <div class="pt-2 space-y-2">
+                <p class="text-base text-red-900 font-medium text-center">Uso exclusivo para cuerpos de rescate y personal médico autorizado.</p>
+                <button id="btn-pdf" type="button" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                    📄 Descargar Ficha en PDF
+                </button>
+            </div>
 
             <!-- BLOQUE ADMINISTRATIVO INTEGRADO AL FINAL (SOLO VISIBLE EN MODO CONTROL) -->
             <div id="admin-tools-block" class="bg-slate-900 text-white p-5 rounded-2xl space-y-4 border border-slate-700 shadow-xl hidden">
@@ -172,7 +175,7 @@
                     <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all mt-2"></span>
                 </div>
 
-                <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow transition text-sm flex items-center justify-center gap-2 cursor-pointer">
+                <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition text-base flex items-center justify-center gap-2 cursor-pointer">
                     📥 Descargar Imagen QR (PNG)
                 </button>
             </div>
@@ -204,6 +207,20 @@
             <div class="flex gap-3">
                 <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closeEmergencyModal()">Cancelar</button>
                 <button type="button" class="modal-btn btn-confirm flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-modal-confirmar">Llamar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SEGURIDAD GENERACIÓN DE PDF -->
+    <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="pdfModal">
+        <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
+            <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
+            <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
+                Está intentando generar y descargar un documento con información médica oficial de primera respuesta. Le recordamos que el uso indebido de este acceso es penalizado y que esta ficha es de carácter confidencial para personal de auxilio. Si no requiere el documento, cancele esta acción.
+            </div>
+            <div class="flex gap-3">
+                <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closePdfModal()">Cancelar</button>
+                <button type="button" class="modal-btn btn-confirm flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-pdf-modal-confirmar">Generar PDF</button>
             </div>
         </div>
     </div>
@@ -354,6 +371,20 @@
             closeEmergencyModal();
         });
 
+        /* CONTROLADORES DEL MODAL DE PDF */
+        window.openPdfModal = function() {
+            document.getElementById('pdfModal').style.display = 'flex';
+        }
+
+        window.closePdfModal = function() {
+            document.getElementById('pdfModal').style.display = 'none';
+        }
+
+        document.getElementById('btn-pdf-modal-confirmar').addEventListener('click', () => {
+            closePdfModal();
+            ejecutarDescargaPDF();
+        });
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -489,8 +520,15 @@
             }
         }
 
+        /* EL BOTÓN DE PDF ABRE EL MODAL DE SEGURIDAD */
         const btnPdf = document.getElementById('btn-pdf');
         btnPdf.addEventListener('click', () => {
+            if (!datosFichaGlobal) return;
+            openPdfModal();
+        });
+
+        /* FUNCIÓN QUE EJECUTA LA GENERACIÓN DEL PDF TRAS CONFIRMAR EN EL MODAL */
+        function ejecutarDescargaPDF() {
             if (!datosFichaGlobal) return;
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -595,7 +633,7 @@
                 const nombreArchivoLimpio = data.cedula ? data.cedula.replace(/[^a-zA-Z0-9-_]/g, '_') : 'Oficial';
                 doc.save(`Ficha_Medica_${nombreArchivoLimpio}.pdf`);
             }
-        });
+        }
 
         function mostrarError() {
             document.getElementById('loading').classList.add('hidden');
