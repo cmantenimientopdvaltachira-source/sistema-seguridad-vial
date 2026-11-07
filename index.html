@@ -9,12 +9,12 @@
     <!-- Librería jsPDF Nativa y plugin AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- Librería nativa para generar códigos QR al vuelo -->
+    <!-- Librería nativa para generar códigos QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
-    <!-- CONTENEDOR VISTA WEB -->
+    <!-- CONTENEDOR VISTA WEB PÚBLICA (PARA RESCATISTAS / MÉDICOS) -->
     <div id="ficha-printable" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200">
         <div class="bg-red-600 text-white p-5 text-center">
             <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB-Emergencia Vial</h1>
@@ -136,25 +136,10 @@
                 </a>
             </div>
 
-            <!-- SECCIÓN ADMINISTRATIVA EXCLUSIVA PARA EL CREADOR (GENERADOR QR & PDF) -->
-            <div id="admin-tools-container" class="bg-slate-900 text-white p-4 rounded-xl space-y-3 border border-slate-700 shadow-inner">
-                <span class="block text-xs font-extrabold text-red-400 uppercase tracking-wider">🛠️ Panel de Control Privado (Admin)</span>
-                <p class="text-xs text-slate-300">Genera el código QR oficial o descarga la ficha técnica de este registro verificado:</p>
-                
-                <div class="flex flex-col items-center justify-center bg-white p-3 rounded-lg">
-                    <div id="qrcode-box" class="mb-2"></div>
-                    <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all"></span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl shadow transition text-xs flex items-center justify-center gap-1 cursor-pointer">
-                        📥 Descargar QR
-                    </button>
-                    <button id="btn-pdf" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-3 rounded-xl shadow transition text-xs flex items-center justify-center gap-1 cursor-pointer">
-                        📄 Descargar PDF
-                    </button>
-                </div>
-            </div>
+            <!-- ÚNICA ACCIÓN PÚBLICA EXTRA: DESCARGAR PDF DE LA FICHA -->
+            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                📄 Descargar Ficha en PDF
+            </button>
         </div>
 
         <div id="error-container" class="p-10 text-center hidden">
@@ -164,28 +149,44 @@
         </div>
     </div>
 
-    <!-- MODAL BUSCADOR PRIVADO ADMIN -->
+    <!-- MODAL BUSCADOR Y GENERADOR DE QR PRIVADO (SOLO PARA ADMIN) -->
     <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4 border border-slate-200">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4 border border-slate-200 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🔍 Verificación Privada de Fichas</h3>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🛠️ Panel de Control Privado</h3>
                 <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para cargar y verificar los datos en el panel antes de generar tu QR.</p>
+            
+            <!-- BÚSQUEDA -->
             <div class="space-y-3">
+                <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para verificar datos y generar el código QR oficial.</p>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar por ID o Cédula</label>
                     <input type="text" id="adminSearchInput" placeholder="Ej: MOT-001 o V-18456789" class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
                 </div>
                 <button type="button" id="btnAdminSearch" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-sm">
-                    🔎 Buscar y Cargar Ficha
+                    🔎 Buscar, Ver Ficha y Generar QR
                 </button>
                 <div id="adminSearchError" class="text-xs font-bold text-red-600 text-center hidden"></div>
+            </div>
+
+            <!-- ÁREA EXCLUSIVA DE GENERACIÓN Y DESCARGA DE QR -->
+            <div id="admin-qr-result" class="bg-slate-900 text-white p-4 rounded-xl space-y-3 border border-slate-700 hidden">
+                <span class="block text-xs font-extrabold text-red-400 uppercase tracking-wider text-center">📱 Código QR Oficial Generado</span>
+                
+                <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl">
+                    <div id="qrcode-box" class="p-2 bg-white rounded"></div>
+                    <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all mt-2"></span>
+                </div>
+
+                <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl shadow transition text-sm flex items-center justify-center gap-2 cursor-pointer">
+                    📥 Descargar Imagen QR (Alta Nitidez)
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- BOTÓN DISCRETO SOLO PARA ADMIN EN FOOTER -->
+    <!-- ACCESO DISCRETO FOOTER (SOLO ADMIN) -->
     <footer class="text-center text-xs text-slate-400 py-4 flex flex-col items-center gap-2">
         <span>RB-Emergencia Vial &bull; Ámbito Nacional</span>
         <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-slate-600 text-[10px] underline cursor-pointer">
@@ -193,12 +194,12 @@
         </button>
     </footer>
 
-    <!-- MODAL DE SEGURIDAD LLAMADAS -->
+    <!-- MODAL SEGURIDAD LLAMADAS -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
             <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
-                Está intentando activar un canal de emergencia verificado. Le recordamos que el uso indebido de este acceso con fines de estafa o suplantación es penalizado y rastreado. Si no es una emergencia real, cancele esta acción de inmediato.
+                Está intentando activar un canal de emergencia verificado. Le recordamos que el uso indebido de este acceso es penalizado. Si no es una emergencia real, cancele esta acción.
             </div>
             <div class="flex gap-3">
                 <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closeEmergencyModal()">Cancelar</button>
@@ -207,7 +208,7 @@
         </div>
     </div>
 
-    <!-- Script de conexión dinámica por URL -->
+    <!-- SCRIPT PRINCIPAL -->
     <script type="module">
         import { db } from "./firebase-config.js";
         import { doc, getDoc, collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -249,7 +250,6 @@
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('ficha-container').classList.add('hidden');
             document.getElementById('error-container').classList.add('hidden');
-            closeAdminModal();
 
             try {
                 const docRef = doc(db, "motorizados", queryValue);
@@ -268,14 +268,64 @@
                 if (docSnap && docSnap.exists()) {
                     idDocumentoActual = docIdEncontrado;
                     renderizarFicha(docSnap.data(), docIdEncontrado);
+                    generarQRAdmin(docIdEncontrado);
                 } else {
-                    mostrarError();
+                    document.getElementById('loading').classList.add('hidden');
+                    errorDiv.innerText = "No se encontró ningún registro con ese ID o Cédula.";
+                    errorDiv.classList.remove('hidden');
                 }
             } catch (err) {
                 console.error("Error en búsqueda privada:", err);
-                mostrarError();
+                document.getElementById('loading').classList.add('hidden');
+                errorDiv.innerText = "Error al consultar la base de datos.";
+                errorDiv.classList.remove('hidden');
             }
         });
+
+        function generarQRAdmin(docId) {
+            const qrBox = document.getElementById('qrcode-box');
+            qrBox.innerHTML = ""; 
+
+            // URL directa y optimizada para el QR
+            const baseUrl = window.location.href.split('#')[0];
+            const urlCompletaQR = `${baseUrl}#${docId}`;
+            document.getElementById('qr-url-text').innerText = urlCompletaQR;
+
+            try {
+                new QRCode(qrBox, {
+                    text: urlCompletaQR,
+                    width: 220,
+                    height: 220,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M // Nivel M para mayor espacio entre bloques y mejor lectura rápida
+                });
+                document.getElementById('admin-qr-result').classList.remove('hidden');
+            } catch (e) {
+                console.error("Error al generar QR:", e);
+            }
+
+            document.getElementById('btn-download-qr').onclick = () => {
+                const imgTag = qrBox.querySelector('img');
+                const canvasTag = qrBox.querySelector('canvas');
+                let imageUrl = "";
+
+                if (imgTag && imgTag.src) {
+                    imageUrl = imgTag.src;
+                } else if (canvasTag) {
+                    imageUrl = canvasTag.toDataURL("image/png");
+                }
+
+                if (imageUrl) {
+                    const enlaceQr = document.createElement('a');
+                    enlaceQr.href = imageUrl;
+                    enlaceQr.download = `QR_Oficial_${docId}.png`;
+                    document.body.appendChild(enlaceQr);
+                    enlaceQr.click();
+                    document.body.removeChild(enlaceQr);
+                }
+            };
+        }
 
         window.openEmergencyModal = function(numero) {
             if (!numero) return;
@@ -348,50 +398,6 @@
             document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
             document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
 
-            // GENERACIÓN AUTOMÁTICA DEL CÓDIGO QR EN EL PANEL PRIVADO
-            const qrBox = document.getElementById('qrcode-box');
-            qrBox.innerHTML = ""; // Limpiar QR anterior si existía
-            const urlCompletaQR = `${window.location.origin}${window.location.pathname}#${docId}`;
-            document.getElementById('qr-url-text').innerText = urlCompletaQR;
-
-            try {
-                new QRCode(qrBox, {
-                    text: urlCompletaQR,
-                    width: 140,
-                    height: 140,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-            } catch (e) {
-                console.error("Error al generar QR:", e);
-            }
-
-            // Botón para descargar la imagen del QR generado
-            const btnDownloadQr = document.getElementById('btn-download-qr');
-            btnDownloadQr.onclick = () => {
-                const imgTag = qrBox.querySelector('img');
-                const canvasTag = qrBox.querySelector('canvas');
-                let imageUrl = "";
-
-                if (imgTag && imgTag.src) {
-                    imageUrl = imgTag.src;
-                } else if (canvasTag) {
-                    imageUrl = canvasTag.toDataURL("image/png");
-                }
-
-                if (imageUrl) {
-                    const enlaceQr = document.createElement('a');
-                    enlaceQr.href = imageUrl;
-                    enlaceQr.download = `QR_${docId}_${data.cedula || 'Ficha'}.png`;
-                    document.body.appendChild(enlaceQr);
-                    enlaceQr.click();
-                    document.body.removeChild(enlaceQr);
-                } else {
-                    alert("No se pudo generar la imagen del QR. Intente de nuevo.");
-                }
-            };
-
             const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
             const btnSeguro = document.getElementById('btn-seguro');
             if (telefonoSeguro) {
@@ -451,10 +457,7 @@
                     const docRef = doc(db, "motorizados", hashId);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        // Si entra un rescatista mediante un QR con hashtag, ocultamos herramientas de admin
                         renderizarFicha(docSnap.data(), hashId);
-                        const adminTools = document.getElementById('admin-tools-container');
-                        if (adminTools) adminTools.style.display = 'none';
                     } else {
                         mostrarError();
                     }
