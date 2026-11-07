@@ -14,19 +14,38 @@
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
-    <!-- CONTENEDOR VISTA WEB PÚBLICA (PARA RESCATISTAS / MÉDICOS) -->
+    <!-- CONTENEDOR PRINCIPAL -->
     <div id="ficha-printable" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200">
+        
+        <!-- CABECERA PRINCIPAL -->
         <div class="bg-red-600 text-white p-5 text-center">
             <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB-Emergencia Vial</h1>
             <p class="text-sm font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
+        <!-- BARRA DE BÚSQUEDA INTEGRADA (SOLO VISIBLE EN MODO ADMIN/CONTROL) -->
+        <div id="admin-search-bar" class="p-4 bg-slate-900 text-white border-b border-slate-700 hidden space-y-3">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-red-400 uppercase tracking-wider">🛠️ Panel de Control Privado</span>
+                <span class="text-[10px] text-slate-400">Ctrl + Shift + A</span>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="adminSearchInput" placeholder="ID (ej: MOT-001) o Cédula..." class="flex-1 border border-slate-600 bg-slate-800 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                <button type="button" id="btnAdminSearch" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-1 cursor-pointer">
+                    🔎 Buscar
+                </button>
+            </div>
+            <div id="adminSearchError" class="text-xs font-bold text-red-400 text-center hidden"></div>
+        </div>
+
+        <!-- INDICADOR DE CARGA -->
         <div id="loading" class="p-10 text-center text-slate-500 text-base font-medium">
             Cargando información de emergencia...
         </div>
 
+        <!-- CONTENEDOR DE LA FICHA MÉDICA -->
         <div id="ficha-container" class="p-6 space-y-5 hidden">
-            <!-- BLOQUE 1 -->
+            <!-- BLOQUE 1: DATOS PERSONALES -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
                 <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
@@ -38,7 +57,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 2 -->
+            <!-- BLOQUE 2: INFORMACIÓN MÉDICA -->
             <div>
                 <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider mb-2">2. Información Médica</span>
                 <div class="grid grid-cols-2 gap-3 mb-3">
@@ -72,7 +91,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL -->
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM -->
             <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
                 <div>
                     <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
@@ -127,7 +146,7 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 6 -->
+            <!-- BLOQUE 6: SISTEMA INTEGRAL -->
             <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
                 <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
                 <p class="text-base text-red-900 font-medium">Coordinación de traslado y patrullaje vial oficial:</p>
@@ -136,12 +155,30 @@
                 </a>
             </div>
 
-            <!-- ÚNICA ACCIÓN PÚBLICA EXTRA: DESCARGAR PDF DE LA FICHA -->
+            <!-- BOTÓN PÚBLICO DESCARGA PDF -->
             <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                 📄 Descargar Ficha en PDF
             </button>
+
+            <!-- BLOQUE ADMINISTRATIVO INTEGRADO AL FINAL (SOLO VISIBLE EN MODO CONTROL) -->
+            <div id="admin-tools-block" class="bg-slate-900 text-white p-5 rounded-2xl space-y-4 border border-slate-700 shadow-xl hidden">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                    <span class="block text-xs font-extrabold text-red-400 uppercase tracking-wider">📱 Código QR Oficial Generado</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Alta Nitidez</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl">
+                    <div id="qrcode-box" class="p-2 bg-white rounded"></div>
+                    <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all mt-2"></span>
+                </div>
+
+                <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow transition text-sm flex items-center justify-center gap-2 cursor-pointer">
+                    📥 Descargar Imagen QR (PNG)
+                </button>
+            </div>
         </div>
 
+        <!-- ERROR SI EL CÓDIGO NO EXISTE -->
         <div id="error-container" class="p-10 text-center hidden">
             <div class="text-red-500 text-6xl mb-3">⚠️</div>
             <h2 class="text-2xl font-bold text-slate-800">Código no disponible</h2>
@@ -149,47 +186,10 @@
         </div>
     </div>
 
-    <!-- MODAL BUSCADOR Y GENERADOR DE QR PRIVADO (SOLO PARA ADMIN) -->
-    <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl space-y-4 border border-slate-200 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🛠️ Panel de Control Privado</h3>
-                <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
-            </div>
-            
-            <!-- BÚSQUEDA -->
-            <div class="space-y-3">
-                <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para verificar datos y generar el código QR oficial.</p>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar por ID o Cédula</label>
-                    <input type="text" id="adminSearchInput" placeholder="Ej: MOT-001 o V-18456789" class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
-                </div>
-                <button type="button" id="btnAdminSearch" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition text-sm">
-                    🔎 Buscar, Ver Ficha y Generar QR
-                </button>
-                <div id="adminSearchError" class="text-xs font-bold text-red-600 text-center hidden"></div>
-            </div>
-
-            <!-- ÁREA EXCLUSIVA DE GENERACIÓN Y DESCARGA DE QR -->
-            <div id="admin-qr-result" class="bg-slate-900 text-white p-4 rounded-xl space-y-3 border border-slate-700 hidden">
-                <span class="block text-xs font-extrabold text-red-400 uppercase tracking-wider text-center">📱 Código QR Oficial Generado</span>
-                
-                <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl">
-                    <div id="qrcode-box" class="p-2 bg-white rounded"></div>
-                    <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all mt-2"></span>
-                </div>
-
-                <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-3 rounded-xl shadow transition text-sm flex items-center justify-center gap-2 cursor-pointer">
-                    📥 Descargar Imagen QR (Alta Nitidez)
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ACCESO DISCRETO FOOTER (SOLO ADMIN) -->
+    <!-- FOOTER CON ACCESO DISCRETO -->
     <footer class="text-center text-xs text-slate-400 py-4 flex flex-col items-center gap-2">
         <span>RB-Emergencia Vial &bull; Ámbito Nacional</span>
-        <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-slate-600 text-[10px] underline cursor-pointer">
+        <button type="button" id="btn-toggle-admin" class="text-slate-400 hover:text-slate-600 text-[10px] underline cursor-pointer">
             🔒 Modo Administrador
         </button>
     </footer>
@@ -217,26 +217,38 @@
         let latitudActual = null;
         let longitudActual = null;
         let numeroTelefonicoPendiente = "";
-        let idDocumentoActual = "";
+        let esModoAdmin = false;
 
-        window.openAdminModal = function() {
-            document.getElementById('adminModal').style.display = 'flex';
+        const adminSearchBar = document.getElementById('admin-search-bar');
+        const adminToolsBlock = document.getElementById('admin-tools-block');
+        const btnToggleAdmin = document.getElementById('btn-toggle-admin');
+
+        function activarModoAdmin() {
+            esModoAdmin = true;
+            adminSearchBar.classList.remove('hidden');
+            if (datosFichaGlobal) {
+                adminToolsBlock.classList.remove('hidden');
+            }
             document.getElementById('adminSearchInput').focus();
         }
 
-        window.closeAdminModal = function() {
-            document.getElementById('adminModal').style.display = 'none';
-            document.getElementById('adminSearchError').classList.add('hidden');
-        }
+        btnToggleAdmin.addEventListener('click', () => {
+            activarModoAdmin();
+        });
 
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
-                openAdminModal();
+                activarModoAdmin();
             }
         });
 
-        document.getElementById('btnAdminSearch').addEventListener('click', async () => {
+        document.getElementById('btnAdminSearch').addEventListener('click', () => ejecutarBusquedaAdmin());
+        document.getElementById('adminSearchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') ejecutarBusquedaAdmin();
+        });
+
+        async function ejecutarBusquedaAdmin() {
             const queryValue = document.getElementById('adminSearchInput').value.trim();
             const errorDiv = document.getElementById('adminSearchError');
             errorDiv.classList.add('hidden');
@@ -266,9 +278,7 @@
                 }
 
                 if (docSnap && docSnap.exists()) {
-                    idDocumentoActual = docIdEncontrado;
                     renderizarFicha(docSnap.data(), docIdEncontrado);
-                    generarQRAdmin(docIdEncontrado);
                 } else {
                     document.getElementById('loading').classList.add('hidden');
                     errorDiv.innerText = "No se encontró ningún registro con ese ID o Cédula.";
@@ -280,13 +290,12 @@
                 errorDiv.innerText = "Error al consultar la base de datos.";
                 errorDiv.classList.remove('hidden');
             }
-        });
+        }
 
         function generarQRAdmin(docId) {
             const qrBox = document.getElementById('qrcode-box');
             qrBox.innerHTML = ""; 
 
-            // URL directa y optimizada para el QR
             const baseUrl = window.location.href.split('#')[0];
             const urlCompletaQR = `${baseUrl}#${docId}`;
             document.getElementById('qr-url-text').innerText = urlCompletaQR;
@@ -298,9 +307,9 @@
                     height: 220,
                     colorDark : "#000000",
                     colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.M // Nivel M para mayor espacio entre bloques y mejor lectura rápida
+                    correctLevel : QRCode.CorrectLevel.M
                 });
-                document.getElementById('admin-qr-result').classList.remove('hidden');
+                adminToolsBlock.classList.remove('hidden');
             } catch (e) {
                 console.error("Error al generar QR:", e);
             }
@@ -367,7 +376,6 @@
 
         function renderizarFicha(data, docId) {
             datosFichaGlobal = data; 
-            idDocumentoActual = docId;
             const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
 
             document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -448,12 +456,22 @@
             document.getElementById('btn-171').setAttribute('href', 'tel:171');
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('ficha-container').classList.remove('hidden');
+
+            if (esModoAdmin) {
+                generarQRAdmin(docId);
+            } else {
+                adminToolsBlock.classList.add('hidden');
+            }
         }
 
         async function cargarDatos() {
             try {
                 const hashId = window.location.hash ? window.location.hash.substring(1) : null;
                 if (hashId) {
+                    esModoAdmin = false;
+                    adminSearchBar.classList.add('hidden');
+                    adminToolsBlock.classList.add('hidden');
+                    
                     const docRef = doc(db, "motorizados", hashId);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
@@ -463,7 +481,7 @@
                     }
                 } else {
                     document.getElementById('loading').classList.add('hidden');
-                    openAdminModal();
+                    activarModoAdmin();
                 }
             } catch (error) {
                 console.error("Error al cargar:", error);
