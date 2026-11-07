@@ -9,6 +9,8 @@
     <!-- Librería jsPDF Nativa y plugin AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- Librería nativa para generar códigos QR al vuelo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between p-4">
 
@@ -134,9 +136,25 @@
                 </a>
             </div>
 
-            <button id="btn-pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
-                📄 Descargar Ficha en PDF
-            </button>
+            <!-- SECCIÓN ADMINISTRATIVA EXCLUSIVA PARA EL CREADOR (GENERADOR QR & PDF) -->
+            <div id="admin-tools-container" class="bg-slate-900 text-white p-4 rounded-xl space-y-3 border border-slate-700 shadow-inner">
+                <span class="block text-xs font-extrabold text-red-400 uppercase tracking-wider">🛠️ Panel de Control Privado (Admin)</span>
+                <p class="text-xs text-slate-300">Genera el código QR oficial o descarga la ficha técnica de este registro verificado:</p>
+                
+                <div class="flex flex-col items-center justify-center bg-white p-3 rounded-lg">
+                    <div id="qrcode-box" class="mb-2"></div>
+                    <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all"></span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-download-qr" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl shadow transition text-xs flex items-center justify-center gap-1 cursor-pointer">
+                        📥 Descargar QR
+                    </button>
+                    <button id="btn-pdf" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-3 rounded-xl shadow transition text-xs flex items-center justify-center gap-1 cursor-pointer">
+                        📄 Descargar PDF
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div id="error-container" class="p-10 text-center hidden">
@@ -153,7 +171,7 @@
                 <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🔍 Verificación Privada de Fichas</h3>
                 <button type="button" onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
             </div>
-            <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para cargar y verificar los datos en el panel antes de imprimir tu QR.</p>
+            <p class="text-xs text-slate-500">Ingresa el ID del documento (ej: <strong>MOT-001</strong>) o la Cédula para cargar y verificar los datos en el panel antes de generar tu QR.</p>
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar por ID o Cédula</label>
@@ -198,8 +216,8 @@
         let latitudActual = null;
         let longitudActual = null;
         let numeroTelefonicoPendiente = "";
+        let idDocumentoActual = "";
 
-        // Funciones Modal Admin Privado
         window.openAdminModal = function() {
             document.getElementById('adminModal').style.display = 'flex';
             document.getElementById('adminSearchInput').focus();
@@ -210,7 +228,6 @@
             document.getElementById('adminSearchError').classList.add('hidden');
         }
 
-        // Acceso por teclado rápido: Ctrl + Shift + A
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
                 e.preventDefault();
@@ -218,7 +235,6 @@
             }
         });
 
-        // Búsqueda administrada directa en Firestore
         document.getElementById('btnAdminSearch').addEventListener('click', async () => {
             const queryValue = document.getElementById('adminSearchInput').value.trim();
             const errorDiv = document.getElementById('adminSearchError');
@@ -236,21 +252,22 @@
             closeAdminModal();
 
             try {
-                // 1. Intentar buscar por ID directo de documento (ej: MOT-001)
                 const docRef = doc(db, "motorizados", queryValue);
                 let docSnap = await getDoc(docRef);
+                let docIdEncontrado = queryValue;
 
-                // 2. Si no lo encuentra por ID, busca por la cédula
                 if (!docSnap.exists()) {
                     const q = query(collection(db, "motorizados"), where("cedula", "==", queryValue), limit(1));
                     const querySnapshot = await getDocs(q);
                     if (!querySnapshot.empty) {
                         docSnap = querySnapshot.docs[0];
+                        docIdEncontrado = docSnap.id;
                     }
                 }
 
                 if (docSnap && docSnap.exists()) {
-                    renderizarFicha(docSnap.data());
+                    idDocumentoActual = docIdEncontrado;
+                    renderizarFicha(docSnap.data(), docIdEncontrado);
                 } else {
                     mostrarError();
                 }
@@ -298,8 +315,9 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
-        function renderizarFicha(data) {
+        function renderizarFicha(data, docId) {
             datosFichaGlobal = data; 
+            idDocumentoActual = docId;
             const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
 
             document.getElementById('nombre-usuario').innerText = data.nombreCompleto || "No registrado";
@@ -313,11 +331,9 @@
             document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
             document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
             
-            // Contacto 1
             document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
             document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
 
-            // Contacto 2
             const contacto2Bloque = document.getElementById('contenedor-contacto-2');
             if (data.contacto2Nombre) {
                 contacto2Bloque.style.display = 'block';
@@ -331,6 +347,50 @@
             document.getElementById('tipo-vehiculo').innerText = vehiculoLimpio;
             document.getElementById('aseguradora').innerText = data.aseguradora || "Particular";
             document.getElementById('nro-poliza').innerText = data.nroPoliza || "N/A";
+
+            // GENERACIÓN AUTOMÁTICA DEL CÓDIGO QR EN EL PANEL PRIVADO
+            const qrBox = document.getElementById('qrcode-box');
+            qrBox.innerHTML = ""; // Limpiar QR anterior si existía
+            const urlCompletaQR = `${window.location.origin}${window.location.pathname}#${docId}`;
+            document.getElementById('qr-url-text').innerText = urlCompletaQR;
+
+            try {
+                new QRCode(qrBox, {
+                    text: urlCompletaQR,
+                    width: 140,
+                    height: 140,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            } catch (e) {
+                console.error("Error al generar QR:", e);
+            }
+
+            // Botón para descargar la imagen del QR generado
+            const btnDownloadQr = document.getElementById('btn-download-qr');
+            btnDownloadQr.onclick = () => {
+                const imgTag = qrBox.querySelector('img');
+                const canvasTag = qrBox.querySelector('canvas');
+                let imageUrl = "";
+
+                if (imgTag && imgTag.src) {
+                    imageUrl = imgTag.src;
+                } else if (canvasTag) {
+                    imageUrl = canvasTag.toDataURL("image/png");
+                }
+
+                if (imageUrl) {
+                    const enlaceQr = document.createElement('a');
+                    enlaceQr.href = imageUrl;
+                    enlaceQr.download = `QR_${docId}_${data.cedula || 'Ficha'}.png`;
+                    document.body.appendChild(enlaceQr);
+                    enlaceQr.click();
+                    document.body.removeChild(enlaceQr);
+                } else {
+                    alert("No se pudo generar la imagen del QR. Intente de nuevo.");
+                }
+            };
 
             const telefonoSeguro = data.telefonoSeguro || data.telefonoAseguradora;
             const btnSeguro = document.getElementById('btn-seguro');
@@ -391,12 +451,14 @@
                     const docRef = doc(db, "motorizados", hashId);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        renderizarFicha(docSnap.data());
+                        // Si entra un rescatista mediante un QR con hashtag, ocultamos herramientas de admin
+                        renderizarFicha(docSnap.data(), hashId);
+                        const adminTools = document.getElementById('admin-tools-container');
+                        if (adminTools) adminTools.style.display = 'none';
                     } else {
                         mostrarError();
                     }
                 } else {
-                    // Si entra sin hash, abre directamente el panel de búsqueda rápida
                     document.getElementById('loading').classList.add('hidden');
                     openAdminModal();
                 }
