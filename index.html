@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RB-Emergencia Vial - Ficha Médica</title>
+    <title>RB - Asistencia y Emergencia Médica - Ficha Médica</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Librería jsPDF Nativa y plugin AutoTable -->
@@ -19,7 +19,7 @@
         
         <!-- CABECERA PRINCIPAL -->
         <div class="bg-red-600 text-white p-5 text-center">
-            <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB-Emergencia Vial</h1>
+            <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB - Asistencia y Emergencia Médica</h1>
             <p class="text-sm font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
@@ -188,7 +188,7 @@
 
     <!-- FOOTER CON ACCESO DISCRETO -->
     <footer class="text-center text-xs text-slate-400 py-4 flex flex-col items-center gap-2">
-        <span>RB-Emergencia Vial &bull; Ámbito Nacional</span>
+        <span>RB - Asistencia y Emergencia Médica &bull; Ámbito Nacional</span>
         <button type="button" id="btn-toggle-admin" class="text-slate-400 hover:text-slate-600 text-[10px] underline cursor-pointer">
             🔒 Modo Administrador
         </button>
@@ -430,7 +430,7 @@
                 let telWp = tel1.replace(/\D/g,'');
                 if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                 const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                const textoWp = `🚨 AVISO URGENTE DE EMERGENCIA MÉDICA.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) requiere asistencia médica de emergencia.\n\nEsta alerta ha sido emitida desde el sistema. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                 window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
             };
 
@@ -449,7 +449,7 @@
                 let telWp = tel2.replace(/\D/g,'');
                 if (telWp.startsWith('0')) telWp = '58' + telWp.substring(1);
                 const gpsUrl = (latitudActual && longitudActual) ? `https://maps.google.com/?q=${latitudActual},${longitudActual}` : `Ubicación por confirmar`;
-                const textoWp = `🚨 AVISO URGENTE DE ACCIDENTE VIAL.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) ha sufrido un accidente de tránsito.\n\nEsta alerta ha sido emitida desde el lugar de los hechos. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
+                const textoWp = `🚨 AVISO URGENTE DE EMERGENCIA MÉDICA.\n\nSe informa que el/la ciudadano(a): *${data.nombreCompleto || 'Afectado'}* (N° Cédula: *${data.cedula || 'N/A'}*) requiere asistencia médica de emergencia.\n\nEsta alerta ha sido emitida desde el sistema. Por favor, comunicarse o escribir de inmediato a este número para coordinar la atención, recibir información y mantenerse al tanto.\n\n⚠️ *AVISO DE SEGURIDAD:* Los organismos oficiales del Estado NUNCA solicitan dinero ni transferencias. Ignore cualquier exigencia de pago bajo supuestos conceptos de rescate o trámites de emergencia ni comparta datos bancarios ante llamadas sospechosas.\n\n📍 *Ubicación exacta:*\n${gpsUrl}`;
                 window.open(`https://wa.me/${telWp}?text=${encodeURIComponent(textoWp)}`, '_blank');
             };
 
@@ -497,13 +497,13 @@
             const data = datosFichaGlobal;
 
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(13);
+            doc.setFontSize(11);
             doc.setTextColor(220, 38, 38);
-            doc.text("RB-EMERGENCIA VIAL", 15, 15);
+            doc.text("RB - Asistencia y Emergencia Médica", 15, 15);
 
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("PLATAFORMA DE EMERGENCIA VIAL", 15, 20);
+            doc.text("PLATAFORMA UNIVERSAL DE ASISTENCIA Y SALUD", 15, 20);
 
             doc.setFontSize(9);
             doc.setTextColor(153, 27, 27);
@@ -577,7 +577,7 @@
             doc.setFont("helvetica", "normal");
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("Ficha generada de manera automatizada a través de la plataforma RB-Emergencia Vial.", 105, finalY + 5, { align: "center" });
+            doc.text("Ficha generada de manera automatizada a través de la plataforma RB - Asistencia y Emergencia Médica.", 105, finalY + 5, { align: "center" });
             doc.text("Soporte informativo privado para asistencia en carretera y cuerpos de respuesta rápida.", 105, finalY + 9, { align: "center" });
 
             try {
