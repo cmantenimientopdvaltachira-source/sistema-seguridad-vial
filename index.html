@@ -66,9 +66,9 @@
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
                         <span id="tipo-sangre" class="text-3xl font-black text-red-700 my-auto block text-center">--</span>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-1">
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-2">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
-                        <div id="alergias" class="text-base font-bold text-slate-900 leading-tight">--</div>
+                        <div id="alergias" class="space-y-2">--</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
@@ -418,16 +418,40 @@
             
             document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
             
-            /* CORRECCIÓN TÉCNICA DIRECTA PARA ALERGIAS */
+            /* RENDERIZADO ESTRUCTURADO Y PROFESIONAL DE ALERGIAS */
             const alergiasElem = document.getElementById('alergias');
             if (data.alergias) {
                 let textoOriginal = String(data.alergias).trim();
-                // Limpiamos los paréntesis largos y transformamos el contenido con formato compacto y elegante
-                let textoProcesado = textoOriginal
-                    .replace(/\(([^)]+)\)/g, '<span class="text-xs text-slate-500 font-normal block">($1)</span>');
-                alergiasElem.innerHTML = textoProcesado;
+                
+                // Dividimos inteligentemente por conectores " y " o saltos para soportar múltiples entradas automáticamente
+                // Cada entrada tiene formato ej: "Penicilina (Medicamento)"
+                let items = textoOriginal.split(/\s+y\s+/i);
+                let htmlResultado = "";
+
+                items.forEach((item, index) => {
+                    let match = item.match(/^([^(]+)\(([^)]+)\)$/);
+                    if (match) {
+                        let nombreAlergia = match[1].trim();
+                        let categoriaAlergia = match[2].trim();
+                        
+                        htmlResultado += `
+                            <div class="${index > 0 ? 'mt-2 pt-2 border-t border-red-100' : ''}">
+                                <p class="text-base font-bold text-slate-900 leading-tight">${nombreAlergia}</p>
+                                <span class="text-xs text-slate-500 font-medium">${categoriaAlergia}</span>
+                            </div>
+                        `;
+                    } else {
+                        htmlResultado += `
+                            <div class="${index > 0 ? 'mt-2 pt-2 border-t border-red-100' : ''}">
+                                <p class="text-base font-bold text-slate-900 leading-tight">${item.trim()}</p>
+                            </div>
+                        `;
+                    }
+                });
+
+                alergiasElem.innerHTML = htmlResultado;
             } else {
-                alergiasElem.innerText = "Ninguna";
+                alergiasElem.innerHTML = '<p class="text-base font-bold text-slate-900">Ninguna</p>';
             }
 
             document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
