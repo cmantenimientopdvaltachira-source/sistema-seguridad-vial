@@ -68,7 +68,7 @@
                     </div>
                     <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-1">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
-                        <div id="alergias" class="text-base font-bold text-slate-900 space-y-0.5">--</div>
+                        <div id="alergias" class="text-base font-bold text-slate-900 leading-tight">--</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
@@ -418,12 +418,14 @@
             
             document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
             
-            // RENDERIZADO DE ALERGIAS CON EL TAMAÑO ESTÁNDAR (text-base font-bold)
+            /* CORRECCIÓN TÉCNICA DIRECTA PARA ALERGIAS */
             const alergiasElem = document.getElementById('alergias');
             if (data.alergias) {
-                let textoAlergias = String(data.alergias).trim();
-                // Si viene estructurado con saltos o guiones, los respeta limpiamente manteniendo la escala estándar
-                alergiasElem.innerHTML = textoAlergias.replace(/\n/g, '<br>');
+                let textoOriginal = String(data.alergias).trim();
+                // Limpiamos los paréntesis largos y transformamos el contenido con formato compacto y elegante
+                let textoProcesado = textoOriginal
+                    .replace(/\(([^)]+)\)/g, '<span class="text-xs text-slate-500 font-normal block">($1)</span>');
+                alergiasElem.innerHTML = textoProcesado;
             } else {
                 alergiasElem.innerText = "Ninguna";
             }
