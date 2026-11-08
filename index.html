@@ -418,12 +418,13 @@
             
             document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
             
-            /* RENDERIZADO ESTRUCTURADO Y PROFESIONAL DE ALERGIAS (UI/UX REFINADO) */
+            /* RENDERIZADO ESTRUCTURADO Y PROFESIONAL DE ALERGIAS */
             const alergiasElem = document.getElementById('alergias');
             if (data.alergias) {
                 let textoOriginal = String(data.alergias).trim();
                 
-                // Procesamiento modular que separa por conectores o saltos manteniendo la arquitectura limpia
+                // Dividimos inteligentemente por conectores " y " o saltos para soportar múltiples entradas automáticamente
+                // Cada entrada tiene formato ej: "Penicilina (Medicamento)"
                 let items = textoOriginal.split(/\s+y\s+/i);
                 let htmlResultado = "";
 
