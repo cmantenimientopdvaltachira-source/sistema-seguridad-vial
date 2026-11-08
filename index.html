@@ -68,9 +68,7 @@
                     </div>
                     <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-1">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
-                        <div id="alergias" class="text-sm font-bold text-slate-900 space-y-0.5">
-                            --
-                        </div>
+                        <div id="alergias" class="text-base font-bold text-slate-900 space-y-0.5">--</div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
@@ -420,11 +418,12 @@
             
             document.getElementById('tipo-sangre').innerText = data.tipoSangre || "N/A";
             
-            // RENDERIZADO INTELIGENTE DE ALERGIAS (OPCIÓN 1)
+            // RENDERIZADO DE ALERGIAS CON EL TAMAÑO ESTÁNDAR (text-base font-bold)
             const alergiasElem = document.getElementById('alergias');
             if (data.alergias) {
                 let textoAlergias = String(data.alergias).trim();
-                alergiasElem.innerHTML = `<span class="block text-xs font-semibold text-slate-800">${textoAlergias}</span>`;
+                // Si viene estructurado con saltos o guiones, los respeta limpiamente manteniendo la escala estándar
+                alergiasElem.innerHTML = textoAlergias.replace(/\n/g, '<br>');
             } else {
                 alergiasElem.innerText = "Ninguna";
             }
