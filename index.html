@@ -19,8 +19,8 @@
         
         <!-- CABECERA PRINCIPAL -->
         <div class="bg-red-600 text-white p-5 text-center">
-            <h1 class="text-2xl font-black uppercase tracking-wider">🚨 RB - Asistencia y Emergencia Médica</h1>
-            <p class="text-sm font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
+            <h1 class="text-xl font-black uppercase tracking-wider">🚨 RB - Asistencia y Emergencia Médica</h1>
+            <p class="text-xs font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
         <!-- BARRA DE BÚSQUEDA INTEGRADA (SOLO VISIBLE EN MODO ADMIN/CONTROL) -->
@@ -39,7 +39,7 @@
         </div>
 
         <!-- INDICADOR DE CARGA -->
-        <div id="loading" class="p-10 text-center text-slate-500 text-base font-medium">
+        <div id="loading" class="p-10 text-center text-slate-500 text-sm font-medium">
             Cargando información de emergencia...
         </div>
 
@@ -49,7 +49,7 @@
             <!-- BLOQUE 1: DATOS PERSONALES -->
             <div class="border-b pb-4">
                 <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
-                <h2 id="nombre-usuario" class="text-lg font-extrabold text-slate-900 mt-1.5">--</h2>
+                <h2 id="nombre-usuario" class="text-base font-bold text-slate-900 mt-1.5">--</h2>
                 <div class="text-sm font-medium text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>N° Cédula: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
                     <p>F. Nacimiento: <span id="fecha-nacimiento" class="font-bold text-slate-900">--</span></p>
@@ -64,21 +64,21 @@
                 <div class="grid grid-cols-2 gap-3 mb-3">
                     <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-between">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
-                        <span id="tipo-sangre" class="text-4xl font-black text-red-700 my-auto block text-center">--</span>
+                        <span id="tipo-sangre" class="text-3xl font-black text-red-700 my-auto block text-center">--</span>
                     </div>
                     <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-1">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
-                        <p id="alergias" class="text-sm font-semibold text-slate-900">--</p>
+                        <p id="alergias" class="text-base font-bold text-slate-900">--</p>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
                     <div class="space-y-1">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Condiciones Crónicas</span>
-                        <p id="condiciones-medicas" class="text-sm font-semibold text-slate-900">--</p>
+                        <p id="condiciones-medicas" class="text-base font-bold text-slate-900">--</p>
                     </div>
                     <div class="space-y-1">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Medicamentos</span>
-                        <p id="medicamentos" class="text-sm font-semibold text-slate-900">--</p>
+                        <p id="medicamentos" class="text-base font-bold text-slate-900">--</p>
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
                 <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Datos del Vehículo</span>
                 <div class="text-sm font-medium text-slate-700 space-y-1">
                     <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
-                    <p>Vehículo: <span id="tipo-vehiculo" class="font-bold text-slate-900">--</span></p>
+                    <p>Vehículo: <span id="tipo-vehiculo" class="text-base font-bold text-slate-900">--</span></p>
                 </div>
             </div>
 
@@ -97,7 +97,7 @@
                 <div>
                     <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
                     <div class="text-sm font-medium text-slate-700 mt-2 space-y-1">
-                        <p>Aseguradora / HCM: <span id="aseguradora" class="font-bold text-slate-900">--</span></p>
+                        <p>Aseguradora / HCM: <span id="aseguradora" class="text-base font-bold text-slate-900">--</span></p>
                         <p>N° de Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
                 <div class="border-b border-slate-200 pb-3 space-y-2">
                     <div>
                         <span class="block text-sm font-medium text-red-900 uppercase tracking-wide">Contacto Principal</span>
-                        <h3 id="contacto1-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
+                        <h3 id="contacto1-nombre" class="text-base font-bold text-slate-900">--</h3>
                         <p class="text-sm font-medium text-red-900">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
@@ -133,7 +133,7 @@
                 <div id="contenedor-contacto-2" class="space-y-2 pt-1">
                     <div>
                         <span class="block text-sm font-medium text-red-900 uppercase tracking-wide">Contacto Secundario</span>
-                        <h3 id="contacto2-nombre" class="text-lg font-extrabold text-slate-900">--</h3>
+                        <h3 id="contacto2-nombre" class="text-base font-bold text-slate-900">--</h3>
                         <p class="text-sm font-medium text-red-900">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
@@ -185,8 +185,8 @@
         <!-- ERROR SI EL CÓDIGO NO EXISTE -->
         <div id="error-container" class="p-10 text-center hidden">
             <div class="text-red-500 text-6xl mb-3">⚠️</div>
-            <h2 class="text-2xl font-bold text-slate-800">Código no disponible</h2>
-            <p class="text-base text-slate-500 mt-2">Este código QR se encuentra inactivo, no existe o fue reportado como extraviado.</p>
+            <h2 class="text-xl font-bold text-slate-800">Código no disponible</h2>
+            <p class="text-sm text-slate-500 mt-2">Este código QR se encuentra inactivo, no existe o fue reportado como extraviado.</p>
         </div>
     </div>
 
@@ -201,7 +201,7 @@
     <!-- MODAL SEGURIDAD LLAMADAS -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
-            <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
+            <div class="modal-title text-base font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
                 Está intentando activar un canal de emergencia verificado. Le recordamos que el uso indebido de este acceso es penalizado. Si no es una emergencia real, cancele esta acción.
             </div>
@@ -215,7 +215,7 @@
     <!-- MODAL SEGURIDAD GENERACIÓN DE PDF -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="pdfModal">
         <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
-            <div class="modal-title text-lg font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
+            <div class="modal-title text-base font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
                 Está intentando generar y descargar un documento con información médica oficial de primera respuesta. Le recordamos que el uso indebido de este acceso es penalizado y que esta ficha es de carácter confidencial para personal de auxilio. Si no requiere el documento, cancele esta acción.
             </div>
