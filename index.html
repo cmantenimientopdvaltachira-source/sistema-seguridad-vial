@@ -424,7 +424,6 @@
                 let textoOriginal = String(data.alergias).trim();
                 
                 // Dividimos inteligentemente por conectores " y " o saltos para soportar múltiples entradas automáticamente
-                // Cada entrada tiene formato ej: "Penicilina (Medicamento)"
                 let items = textoOriginal.split(/\s+y\s+/i);
                 let htmlResultado = "";
 
@@ -564,7 +563,7 @@
             openPdfModal();
         });
 
-        /* FUNCIÓN QUE EJECUTA LA GENERACIÓN DEL PDF TRAS CONFIRMAR EN EL MODAL */
+        /* FUNCIÓN CORREGIDA Y OPTIMIZADA QUE EJECUTA LA GENERACIÓN DEL PDF TRAS CONFIRMAR EN EL MODAL */
         function ejecutarDescargaPDF() {
             if (!datosFichaGlobal) return;
             const { jsPDF } = window.jspdf;
@@ -597,6 +596,22 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
+            // CORRECCIÓN ESPECÍFICA Y ROBUSTA DEL CAMPO DE ALERGIAS PARA EL PDF
+            let alergiasPdfTexto = "Ninguna";
+            if (data.alergias) {
+                let rawAlergias = String(data.alergias).trim();
+                // Si contiene formato con paréntesis, los parseamos limpiamente separados por comas
+                let itemsAlergias = rawAlergias.split(/\s+y\s+/i);
+                let formattedItems = itemsAlergias.map(item => {
+                    let match = item.match(/^([^(]+)\(([^)]+)\)$/);
+                    if (match) {
+                        return `${match[1].trim()} (${match[2].trim()})`;
+                    }
+                    return item.trim();
+                });
+                alergiasPdfTexto = formattedItems.join(", ");
+            }
+
             let cuerpoTabla = [
                 [{ content: "1. DATOS PERSONALES DEL CIUDADANO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Nombre Completo:", data.nombreCompleto || "No registrado"],
@@ -607,7 +622,7 @@
 
                 [{ content: "2. ANTECEDENTES Y PERFIL MÉDICO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
-                ["Alergias Conocidas:", data.alergias || "Ninguna"],
+                ["Alergias Conocidas:", alergiasPdfTexto],
                 ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
                 ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
 
