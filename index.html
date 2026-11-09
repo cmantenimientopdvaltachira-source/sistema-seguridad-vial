@@ -314,7 +314,8 @@
             const qrBox = document.getElementById('qrcode-box');
             qrBox.innerHTML = ""; 
 
-            const baseUrl = window.location.href.split('#')[0];
+            // AQUÍ SE OPTIMIZÓ LA URL: Extrae únicamente la base limpia y le añade el ID del usuario
+            const baseUrl = window.location.origin + window.location.pathname;
             const urlCompletaQR = `${baseUrl}#${docId}`;
             document.getElementById('qr-url-text').innerText = urlCompletaQR;
 
@@ -423,7 +424,6 @@
             if (data.alergias) {
                 let textoOriginal = String(data.alergias).trim();
                 
-                // Dividimos inteligentemente por conectores " y " o saltos para soportar múltiples entradas automáticamente
                 let items = textoOriginal.split(/\s+y\s+/i);
                 let htmlResultado = "";
 
@@ -563,7 +563,7 @@
             openPdfModal();
         });
 
-        /* FUNCIÓN CORREGIDA Y OPTIMIZADA QUE EJECUTA LA GENERACIÓN DEL PDF TRAS CONFIRMAR EN EL MODAL */
+        /* FUNCIÓN QUE EJECUTA LA GENERACIÓN DEL PDF TRAS CONFIRMAR EN EL MODAL */
         function ejecutarDescargaPDF() {
             if (!datosFichaGlobal) return;
             const { jsPDF } = window.jspdf;
@@ -596,11 +596,9 @@
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
 
-            // CORRECCIÓN ESPECÍFICA Y ROBUSTA DEL CAMPO DE ALERGIAS PARA EL PDF
             let alergiasPdfTexto = "Ninguna";
             if (data.alergias) {
                 let rawAlergias = String(data.alergias).trim();
-                // Si contiene formato con paréntesis, los parseamos limpiamente separados por comas
                 let itemsAlergias = rawAlergias.split(/\s+y\s+/i);
                 let formattedItems = itemsAlergias.map(item => {
                     let match = item.match(/^([^(]+)\(([^)]+)\)$/);
