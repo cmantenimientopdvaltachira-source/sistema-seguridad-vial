@@ -608,10 +608,6 @@
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const data = datosFichaGlobal;
 
-            // Garantizar lienzo blanco puro en A4 vertical
-            doc.setFillColor(255, 255, 255);
-            doc.rect(0, 0, 210, 297, 'F');
-
             doc.setFont("helvetica", "bold");
             doc.setFontSize(11);
             doc.setTextColor(220, 38, 38);
@@ -693,7 +689,7 @@
                 startY: 28,
                 body: cuerpoTabla,
                 theme: 'plain',
-                styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5, fillColor: [255, 255, 255] },
+                styles: { font: 'helvetica', fontSize: 9, cellPadding: 1.5 },
                 columnStyles: { 
                     0: { fontStyle: 'bold', textColor: [71, 85, 105], cellWidth: 45 }, 
                     1: { fontStyle: 'normal', textColor: [15, 23, 42], cellWidth: 135 } 
