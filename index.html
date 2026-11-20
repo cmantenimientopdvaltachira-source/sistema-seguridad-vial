@@ -17,20 +17,20 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <div id="ficha-printable" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden my-auto border border-slate-200">
         
-        <!-- CABECERA PRINCIPAL -->
-        <div class="bg-red-600 text-white p-5 text-center">
+        <!-- CABECERA PRINCIPAL (30% Secundario: Azul Marino + 10% Acento: Borde inferior Rojo) -->
+        <div class="bg-slate-900 text-white p-5 text-center border-b-4 border-red-600">
             <h1 class="text-xl font-black uppercase tracking-wider">🚨 RB - Asistencia y Emergencia Médica</h1>
-            <p class="text-xs font-extrabold text-red-100 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
+            <p class="text-xs font-extrabold text-slate-300 mt-1 uppercase tracking-wider">Datos médicos de primera respuesta</p>
         </div>
 
         <!-- BARRA DE BÚSQUEDA INTEGRADA (SOLO VISIBLE EN MODO ADMIN/CONTROL) -->
-        <div id="admin-search-bar" class="p-4 bg-slate-900 text-white border-b border-slate-700 hidden space-y-3">
+        <div id="admin-search-bar" class="p-4 bg-slate-800 text-white border-b border-slate-700 hidden space-y-3">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-red-400 uppercase tracking-wider">🛠️ Panel de Control Privado</span>
                 <span class="text-[10px] text-slate-400">Ctrl + Shift + A</span>
             </div>
             <div class="flex gap-2">
-                <input type="text" id="adminSearchInput" placeholder="ID (ej: MOT-001) o Cédula..." class="flex-1 border border-slate-600 bg-slate-800 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                <input type="text" id="adminSearchInput" placeholder="ID (ej: MOT-001) o Cédula..." class="flex-1 border border-slate-600 bg-slate-900 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
                 <button type="button" id="btnAdminSearch" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl transition text-sm flex items-center gap-1 cursor-pointer">
                     🔎 Buscar
                 </button>
@@ -46,9 +46,9 @@
         <!-- CONTENEDOR DE LA FICHA MÉDICA -->
         <div id="ficha-container" class="p-6 space-y-5 hidden">
             
-            <!-- BLOQUE 1: DATOS PERSONALES -->
-            <div class="border-b pb-4">
-                <span class="block text-sm font-extrabold text-slate-500 uppercase tracking-wider">1. Datos Personales</span>
+            <!-- BLOQUE 1: DATOS PERSONALES (60% Principal: Blanco/Gris limpio + 30% Texto oscuro) -->
+            <div class="border-b border-slate-200 pb-4">
+                <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wider">1. Datos Personales</span>
                 <h2 id="nombre-usuario" class="text-base font-bold text-slate-900 mt-1.5">--</h2>
                 <div class="text-sm font-medium text-slate-700 mt-3 space-y-1.5 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <p>N° Cédula: <span id="cedula-usuario" class="font-bold text-slate-900">--</span></p>
@@ -58,51 +58,51 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 2: INFORMACIÓN MÉDICA -->
+            <!-- BLOQUE 2: INFORMACIÓN MÉDICA (10% Acento: Rojo de alerta sobre fondo claro) -->
             <div>
                 <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider mb-2">2. Información Médica</span>
                 <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 flex flex-col justify-between">
-                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Tipo de Sangre</span>
-                        <span id="tipo-sangre" class="text-3xl font-black text-red-700 my-auto block text-center">--</span>
+                    <div class="bg-white p-4 rounded-xl border-2 border-red-600 shadow-sm flex flex-col justify-between">
+                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide text-center">Tipo de Sangre</span>
+                        <span id="tipo-sangre" class="text-3xl font-black text-red-600 my-auto block text-center pt-1">--</span>
                     </div>
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 space-y-2">
+                    <div class="bg-red-50/70 p-4 rounded-xl border border-red-200 space-y-2">
                         <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Alergias</span>
                         <div id="alergias" class="space-y-2">--</div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3 bg-red-50 p-4 rounded-xl border border-red-200">
+                <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Condiciones Crónicas</span>
+                        <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wide">Condiciones Crónicas</span>
                         <p id="condiciones-medicas" class="text-base font-bold text-slate-900">--</p>
                     </div>
                     <div class="space-y-1">
-                        <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wide">Medicamentos</span>
+                        <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wide">Medicamentos</span>
                         <p id="medicamentos" class="text-base font-bold text-slate-900">--</p>
                     </div>
                 </div>
             </div>
 
-            <!-- BLOQUE 3: DATOS DEL VEHÍCULO -->
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider mb-2">3. Datos del Vehículo</span>
+            <!-- BLOQUE 3: DATOS DEL VEHÍCULO (60% Blanco + 30% Azul Marino) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 border-l-4 border-l-slate-800 shadow-sm">
+                <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wider mb-2">3. Datos del Vehículo</span>
                 <div class="text-sm font-medium text-slate-700 space-y-1">
                     <p>Placa: <span id="placa-vehiculo" class="font-bold text-slate-900">--</span></p>
                     <p>Vehículo: <span id="tipo-vehiculo" class="text-base font-bold text-slate-900">--</span></p>
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM -->
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
+            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM (30% Azul Marino para respaldo y confianza) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 border-l-4 border-l-slate-800 shadow-sm space-y-3">
                 <div>
-                    <span class="block text-sm font-extrabold text-blue-700 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
+                    <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wider">4. Póliza de Seguro / HCM y Asistencia Vial</span>
                     <div class="text-sm font-medium text-slate-700 mt-2 space-y-1">
                         <p>Aseguradora / HCM: <span id="aseguradora" class="text-base font-bold text-slate-900">--</span></p>
                         <p>N° de Póliza: <span id="nro-poliza" class="font-bold text-slate-900">--</span></p>
                     </div>
                 </div>
                 <div class="pt-1">
-                    <a id="btn-seguro" href="#" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                    <a id="btn-seguro" href="#" class="block w-full bg-slate-800 hover:bg-slate-900 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                         📞 Contactar Asistencia y HCM 24/7
                     </a>
                 </div>
@@ -110,20 +110,20 @@
 
             <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-                <span class="block text-sm font-extrabold text-slate-600 uppercase tracking-wider">5. Contactos de Emergencia</span>
+                <span class="block text-sm font-extrabold text-slate-800 uppercase tracking-wider">5. Contactos de Emergencia</span>
                 
                 <!-- Contacto 1 -->
                 <div class="border-b border-slate-200 pb-3 space-y-2">
                     <div>
-                        <span class="block text-sm font-medium text-red-900 uppercase tracking-wide">Contacto Principal</span>
+                        <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wide">Contacto Principal</span>
                         <h3 id="contacto1-nombre" class="text-base font-bold text-slate-900">--</h3>
-                        <p class="text-sm font-medium text-red-900">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
+                        <p class="text-sm font-medium text-slate-600">Parentesco: <span id="contacto1-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
-                        <button id="btn-llamar-1" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                        <button id="btn-llamar-1" type="button" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                             📞 Llamar al Contacto 1
                         </button>
-                        <a id="btn-whatsapp-1" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                        <a id="btn-whatsapp-1" href="#" class="block w-full bg-slate-800 hover:bg-slate-900 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                             💬 Enviar Alerta WhatsApp 1 (Con GPS)
                         </a>
                     </div>
@@ -132,25 +132,25 @@
                 <!-- Contacto 2 -->
                 <div id="contenedor-contacto-2" class="space-y-2 pt-1">
                     <div>
-                        <span class="block text-sm font-medium text-red-900 uppercase tracking-wide">Contacto Secundario</span>
+                        <span class="block text-xs font-extrabold text-red-600 uppercase tracking-wide">Contacto Secundario</span>
                         <h3 id="contacto2-nombre" class="text-base font-bold text-slate-900">--</h3>
-                        <p class="text-sm font-medium text-red-900">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
+                        <p class="text-sm font-medium text-slate-600">Parentesco: <span id="contacto2-parentesco" class="font-bold text-slate-900">--</span></p>
                     </div>
                     <div class="grid grid-cols-1 gap-2 pt-1">
-                        <button id="btn-llamar-2" type="button" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                        <button id="btn-llamar-2" type="button" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                             📞 Llamar al Contacto 2
                         </button>
-                        <a id="btn-whatsapp-2" href="#" class="block w-full bg-teal-600 hover:bg-teal-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
+                        <a id="btn-whatsapp-2" href="#" class="block w-full bg-slate-800 hover:bg-slate-900 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                             💬 Enviar Alerta WhatsApp 2 (Con GPS)
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- BLOQUE 6: SISTEMA INTEGRAL -->
-            <div class="bg-red-50 border border-red-200 p-4 rounded-xl space-y-2">
-                <span class="block text-sm font-extrabold text-red-700 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
-                <p class="text-sm font-medium text-red-900">Coordinación de traslado y patrullaje vial oficial:</p>
+            <!-- BLOQUE 6: SISTEMA INTEGRAL (10% Acento de Emergencia Oficial) -->
+            <div class="bg-white border-2 border-red-600 p-4 rounded-xl shadow-sm space-y-2">
+                <span class="block text-sm font-extrabold text-red-600 uppercase tracking-wider">6. Sistema Integral de Emergencia</span>
+                <p class="text-sm font-medium text-slate-700">Coordinación de traslado y patrullaje vial oficial:</p>
                 <a id="btn-171" href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
                 </a>
@@ -158,8 +158,8 @@
 
             <!-- SECCIÓN Y BOTÓN PÚBLICO DESCARGA PDF -->
             <div class="pt-2 space-y-2">
-                <p class="text-sm font-medium text-red-900 text-center">Uso exclusivo para cuerpos de rescate y personal médico autorizado.</p>
-                <button id="btn-pdf" type="button" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
+                <p class="text-xs font-medium text-slate-500 text-center">Uso exclusivo para cuerpos de rescate y personal médico autorizado.</p>
+                <button id="btn-pdf" type="button" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-xl shadow transition duration-200 text-base flex items-center justify-center gap-2 cursor-pointer">
                     📄 Descargar Ficha en PDF
                 </button>
             </div>
@@ -184,8 +184,8 @@
 
         <!-- ERROR SI EL CÓDIGO NO EXISTE -->
         <div id="error-container" class="p-10 text-center hidden">
-            <div class="text-red-500 text-6xl mb-3">⚠️</div>
-            <h2 class="text-xl font-bold text-slate-800">Código no disponible</h2>
+            <div class="text-red-600 text-6xl mb-3">⚠️</div>
+            <h2 class="text-xl font-bold text-slate-900">Código no disponible</h2>
             <p class="text-sm text-slate-500 mt-2">Este código QR se encuentra inactivo, no existe o fue reportado como extraviado.</p>
         </div>
     </div>
@@ -200,28 +200,28 @@
 
     <!-- MODAL SEGURIDAD LLAMADAS -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="emergencyModal">
-        <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
+        <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl border-t-4 border-red-600">
             <div class="modal-title text-base font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
                 Está intentando activar un canal de emergencia verificado. Le recordamos que el uso indebido de este acceso es penalizado. Si no es una emergencia real, cancele esta acción.
             </div>
             <div class="flex gap-3">
                 <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closeEmergencyModal()">Cancelar</button>
-                <button type="button" class="modal-btn btn-confirm flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-modal-confirmar">Llamar</button>
+                <button type="button" class="modal-btn btn-confirm flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-modal-confirmar">Llamar</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL SEGURIDAD GENERACIÓN DE PDF -->
     <div class="modal-overlay fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4" id="pdfModal">
-        <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl">
+        <div class="modal-content bg-white p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl border-t-4 border-slate-900">
             <div class="modal-title text-base font-bold text-slate-900 mb-3">🚨 Sistema de Respuesta Protegido</div>
             <div class="modal-text text-sm text-slate-600 leading-relaxed mb-6">
                 Está intentando generar y descargar un documento con información médica oficial de primera respuesta. Le recordamos que el uso indebido de este acceso es penalizado y que esta ficha es de carácter confidencial para personal de auxilio. Si no requiere el documento, cancele esta acción.
             </div>
             <div class="flex gap-3">
                 <button type="button" class="modal-btn btn-cancel flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 px-4 rounded-xl font-bold text-sm transition" onclick="closePdfModal()">Cancelar</button>
-                <button type="button" class="modal-btn btn-confirm flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-pdf-modal-confirmar">Generar PDF</button>
+                <button type="button" class="modal-btn btn-confirm flex-1 bg-slate-900 hover:bg-slate-800 text-white py-2.5 px-4 rounded-xl font-bold text-sm transition" id="btn-pdf-modal-confirmar">Generar PDF</button>
             </div>
         </div>
     </div>
