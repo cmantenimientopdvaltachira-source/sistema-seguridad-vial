@@ -48,11 +48,6 @@
             border: 1px solid rgba(217, 45, 58, 0.28);
             box-shadow: 0 6px 20px -6px rgba(217, 45, 58, 0.12), 0 1px 3px 0 rgba(18, 36, 58, 0.04);
         }
-        #qrcode-box img,
-        #qrcode-box canvas {
-            display: block !important;
-            margin: 0 auto !important;
-        }
     </style>
 </head>
 <body class="bg-[#F5F7FA] text-[#12243A] min-h-screen flex flex-col justify-between p-4 sm:p-6">
@@ -215,7 +210,7 @@
                 </div>
                 
                 <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl border border-slate-200">
-                    <div id="qrcode-box" class="p-3 bg-white rounded"></div>
+                    <div id="qrcode-box" class="p-2 bg-white rounded"></div>
                     <span id="qr-url-text" class="text-[12px] text-slate-600 font-mono text-center break-all mt-2"></span>
                 </div>
 
@@ -355,36 +350,35 @@
 
         function generarQRAdmin(docId) {
             const qrBox = document.getElementById('qrcode-box');
-            qrBox.innerHTML = "";
+            qrBox.innerHTML = ""; 
 
             const baseUrl = window.location.origin + window.location.pathname;
             const urlCompletaQR = `${baseUrl}#${docId}`;
             document.getElementById('qr-url-text').innerText = urlCompletaQR;
 
-            adminToolsBlock.classList.remove('hidden');
-
             try {
                 new QRCode(qrBox, {
                     text: urlCompletaQR,
-                    width: 200,
-                    height: 200,
+                    width: 220,
+                    height: 220,
                     colorDark : "#000000",
                     colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
+                    correctLevel : QRCode.CorrectLevel.M
                 });
+                adminToolsBlock.classList.remove('hidden');
             } catch (e) {
                 console.error("Error al generar QR:", e);
             }
 
             document.getElementById('btn-download-qr').onclick = () => {
-                const canvasTag = qrBox.querySelector('canvas');
                 const imgTag = qrBox.querySelector('img');
+                const canvasTag = qrBox.querySelector('canvas');
                 let imageUrl = "";
 
-                if (canvasTag) {
-                    imageUrl = canvasTag.toDataURL("image/png");
-                } else if (imgTag && imgTag.src && imgTag.src.startsWith("data:image")) {
+                if (imgTag && imgTag.src) {
                     imageUrl = imgTag.src;
+                } else if (canvasTag) {
+                    imageUrl = canvasTag.toDataURL("image/png");
                 }
 
                 if (imageUrl) {
