@@ -171,8 +171,8 @@
                     <span class="text-[10px] text-slate-400 font-mono">Alta Nitidez</span>
                 </div>
                 
-                <div class="flex flex-col items-center justify-center bg-white p-5 rounded-xl">
-                    <div id="qrcode-box" class="p-4 bg-white rounded flex items-center justify-center"></div>
+                <div class="flex flex-col items-center justify-center bg-white p-4 rounded-xl">
+                    <div id="qrcode-box" class="p-2 bg-white rounded"></div>
                     <span id="qr-url-text" class="text-[10px] text-slate-500 font-mono text-center break-all mt-2"></span>
                 </div>
 
@@ -312,18 +312,12 @@
 
         function generarQRAdmin(docId) {
             const qrBox = document.getElementById('qrcode-box');
-            qrBox.innerHTML = "";
+            qrBox.innerHTML = ""; 
 
-            adminToolsBlock.classList.remove('hidden');
-
+            // AQUÍ SE OPTIMIZÓ LA URL: Extrae únicamente la base limpia y le añade el ID del usuario
             const baseUrl = window.location.origin + window.location.pathname;
             const urlCompletaQR = `${baseUrl}#${docId}`;
             document.getElementById('qr-url-text').innerText = urlCompletaQR;
-
-            if (typeof QRCode === "undefined") {
-                console.error("La librería QRCode no está cargada.");
-                return;
-            }
 
             try {
                 new QRCode(qrBox, {
@@ -334,19 +328,20 @@
                     colorLight : "#ffffff",
                     correctLevel : QRCode.CorrectLevel.M
                 });
+                adminToolsBlock.classList.remove('hidden');
             } catch (e) {
                 console.error("Error al generar QR:", e);
             }
 
             document.getElementById('btn-download-qr').onclick = () => {
-                const canvasTag = qrBox.querySelector('canvas');
                 const imgTag = qrBox.querySelector('img');
+                const canvasTag = qrBox.querySelector('canvas');
                 let imageUrl = "";
 
-                if (canvasTag) {
-                    imageUrl = canvasTag.toDataURL("image/png");
-                } else if (imgTag && imgTag.src) {
+                if (imgTag && imgTag.src) {
                     imageUrl = imgTag.src;
+                } else if (canvasTag) {
+                    imageUrl = canvasTag.toDataURL("image/png");
                 }
 
                 if (imageUrl) {
