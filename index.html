@@ -39,6 +39,35 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Animación ligera en pantalla de carga (máx. 2 segundos) */
+        @keyframes rbPulsoRapido {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.14); }
+        }
+        @keyframes rbBarraCarga {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+        .rb-loading-siren {
+            display: inline-block;
+            animation: rbPulsoRapido 0.9s ease-in-out infinite;
+        }
+        .rb-loading-track {
+            width: 180px;
+            height: 4px;
+            background-color: #FEE2E2;
+            border-radius: 9999px;
+            margin: 12px auto 0;
+            overflow: hidden;
+        }
+        .rb-loading-bar {
+            width: 45%;
+            height: 100%;
+            background-color: var(--rb-red);
+            border-radius: 9999px;
+            animation: rbBarraCarga 0.85s ease-in-out infinite;
+        }
+
         /* Cabecera Principal */
         .rb-header {
             background-color: var(--rb-red);
@@ -250,9 +279,13 @@
             <div id="adminSearchError" class="text-xs font-medium text-red-200 text-center hidden"></div>
         </div>
 
-        <!-- INDICADOR DE CARGA -->
+        <!-- INDICADOR DE CARGA ANIMADO (MÁX. 2 SEGUNDOS) -->
         <div id="loading" class="p-8 text-center rb-secondary-text">
-            Cargando información de emergencia...
+            <div class="text-3xl mb-2"><span class="rb-loading-siren">🚨</span></div>
+            <div>Cargando información de emergencia...</div>
+            <div class="rb-loading-track">
+                <div class="rb-loading-bar"></div>
+            </div>
         </div>
 
         <!-- CONTENEDOR DE LA FICHA MÉDICA -->
@@ -295,19 +328,33 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 3: DATOS DEL VEHÍCULO -->
+            <!-- BLOQUE 3: MÉDICO DE CABECERA -->
+            <div id="contenedor-medico-cabecera" class="rb-card space-y-2.5">
+                <span class="block rb-section-title">3. Médico de Cabecera</span>
+                <div class="space-y-1.5">
+                    <p class="rb-label">Médico Tratante: <span id="medico-cabecera-nombre" class="rb-value ml-1">No registrado</span></p>
+                    <p class="rb-label">Teléfono: <span id="medico-cabecera-telefono" class="rb-value ml-1">No registrado</span></p>
+                </div>
+                <div class="pt-0.5">
+                    <button id="btn-llamar-medico" type="button" class="block w-full rb-btn rb-btn-navy text-center shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                        📞 Llamar al Médico de Cabecera
+                    </button>
+                </div>
+            </div>
+
+            <!-- BLOQUE 4: DATOS DEL VEHÍCULO -->
             <div class="rb-card space-y-2">
-                <span class="block rb-section-title">3. Datos del Vehículo</span>
+                <span class="block rb-section-title">4. Datos del Vehículo</span>
                 <div class="space-y-1.5">
                     <p class="rb-label">Placa: <span id="placa-vehiculo" class="rb-value ml-1">--</span></p>
                     <p class="rb-label">Vehículo: <span id="tipo-vehiculo" class="rb-value ml-1">--</span></p>
                 </div>
             </div>
 
-            <!-- BLOQUE 4: PÓLIZA DE SEGURO / HCM -->
+            <!-- BLOQUE 5: PÓLIZA DE SEGURO / HCM -->
             <div class="rb-card space-y-2.5">
                 <div>
-                    <span class="block rb-section-title">4. Póliza de Seguro / HCM y Asistencia Vial</span>
+                    <span class="block rb-section-title">5. Póliza de Seguro / HCM y Asistencia Vial</span>
                     <div class="mt-2 space-y-1.5">
                         <p class="rb-label">Aseguradora / HCM: <span id="aseguradora" class="rb-value ml-1">--</span></p>
                         <p class="rb-label">N° de Póliza: <span id="nro-poliza" class="rb-value ml-1">--</span></p>
@@ -320,9 +367,9 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 5: CONTACTOS DE EMERGENCIA -->
+            <!-- BLOQUE 6: CONTACTOS DE EMERGENCIA -->
             <div class="rb-card space-y-2.5">
-                <span class="block rb-section-title">5. Contactos de Emergencia</span>
+                <span class="block rb-section-title">6. Contactos de Emergencia</span>
                 
                 <!-- Contacto 1 -->
                 <div class="rb-card-white space-y-2.5">
@@ -359,9 +406,9 @@
                 </div>
             </div>
 
-            <!-- BLOQUE 6: SISTEMA INTEGRAL -->
+            <!-- BLOQUE 7: SISTEMA INTEGRAL -->
             <div class="rb-card-alert space-y-2">
-                <span class="block rb-section-title-alert">6. Sistema Integral de Emergencia</span>
+                <span class="block rb-section-title-alert">7. Sistema Integral de Emergencia</span>
                 <p class="rb-secondary-text">Coordinación de traslado y patrullaje vial oficial:</p>
                 <a id="btn-171" href="#" class="block w-full rb-btn rb-btn-red text-center shadow-sm flex items-center justify-center gap-2">
                     📞 Llamar al 171 (Emergencias)
@@ -619,6 +666,18 @@
             return s.replace(/\s+/g, ' ').trim();
         }
 
+        function mostrarConLimiteCarga(mostrarFichaFn) {
+            const inicioCarga = Date.now();
+            const maximoEsperaMs = 2000;
+            const transcurrido = Date.now() - inicioCarga;
+            const restante = Math.max(0, maximoEsperaMs - transcurrido);
+
+            // Muestra en cuanto esté listo, respetando un tope visual máximo de 2 segundos si se desea ver la animación
+            setTimeout(() => {
+                mostrarFichaFn();
+            }, Math.min(restante, 2000));
+        }
+
         function renderizarFicha(data, docId) {
             datosFichaGlobal = data; 
             const vehiculoLimpio = limpiarVehiculoSeguro(data.tipoVehiculo);
@@ -667,6 +726,27 @@
 
             document.getElementById('condiciones-medicas').innerText = data.condicionesMedicas || "Ninguna";
             document.getElementById('medicamentos').innerText = data.medicamentos || "Ninguno";
+
+            /* MÓDULO 3: MÉDICO DE CABECERA */
+            const medicoNombre = data.medicoCabeceraNombre || data.medicoNombre || "";
+            const medicoTelefono = data.medicoCabeceraTelefono || data.medicoTelefono || "";
+            const medicoBloque = document.getElementById('contenedor-medico-cabecera');
+            const btnLlamarMedico = document.getElementById('btn-llamar-medico');
+
+            if (medicoNombre || medicoTelefono) {
+                medicoBloque.style.display = 'block';
+                document.getElementById('medico-cabecera-nombre').innerText = medicoNombre || "No registrado";
+                document.getElementById('medico-cabecera-telefono').innerText = medicoTelefono || "No registrado";
+
+                if (medicoTelefono) {
+                    btnLlamarMedico.classList.remove('opacity-50', 'pointer-events-none');
+                    btnLlamarMedico.onclick = () => openEmergencyModal(medicoTelefono);
+                } else {
+                    btnLlamarMedico.classList.add('opacity-50', 'pointer-events-none');
+                }
+            } else {
+                medicoBloque.style.display = 'none';
+            }
             
             document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
             document.getElementById('contacto1-parentesco').innerText = data.contacto1Parentesco || "No especificado";
@@ -733,14 +813,19 @@
             };
 
             document.getElementById('btn-171').setAttribute('href', 'tel:171');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('ficha-container').classList.remove('hidden');
 
-            if (esModoAdmin) {
-                generarQRAdmin(docId);
-            } else {
-                adminToolsBlock.classList.add('hidden');
-            }
+            const finalizarVista = () => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('ficha-container').classList.remove('hidden');
+
+                if (esModoAdmin) {
+                    generarQRAdmin(docId);
+                } else {
+                    adminToolsBlock.classList.add('hidden');
+                }
+            };
+
+            mostrarConLimiteCarga(finalizarVista);
         }
 
         async function cargarDatos() {
@@ -807,6 +892,8 @@
 
             const vehiculoPdfFinal = limpiarVehiculoSeguro(data.tipoVehiculo);
             const telefonoSeguroPdf = data.telefonoSeguro || data.telefonoAseguradora || "No registrado";
+            const medicoNombrePdf = data.medicoCabeceraNombre || data.medicoNombre || "";
+            const medicoTelefonoPdf = data.medicoCabeceraTelefono || data.medicoTelefono || "";
 
             let alergiasPdfTexto = "Ninguna";
             if (data.alergias) {
@@ -834,22 +921,32 @@
                 ["Tipo de Sangre:", data.tipoSangre || "N/A"],
                 ["Alergias Conocidas:", alergiasPdfTexto],
                 ["Condiciones Crónicas:", data.condicionesMedicas || "Ninguna"],
-                ["Medicamentos Habituales:", data.medicamentos || "Ninguno"],
+                ["Medicamentos Habituales:", data.medicamentos || "Ninguno"]
+            ];
 
-                [{ content: "3. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+            if (medicoNombrePdf || medicoTelefonoPdf) {
+                cuerpoTabla.push(
+                    [{ content: "3. MÉDICO DE CABECERA", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                    ["Médico Tratante:", medicoNombrePdf || "No registrado"],
+                    ["Teléfono:", medicoTelefonoPdf || "No registrado"]
+                );
+            }
+
+            cuerpoTabla.push(
+                [{ content: "4. DATOS DEL VEHÍCULO", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Placa:", data.placaVehiculo || "No registrado"],
                 ["Tipo de Vehículo:", vehiculoPdfFinal],
 
-                [{ content: "4. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                [{ content: "5. PÓLIZA DE SEGURO / HCM Y ASISTENCIA VIAL", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Aseguradora / HCM:", data.aseguradora || "No registrado"],
                 ["N° de Póliza:", data.nroPoliza || "No registrado"],
                 ["Teléfono Asistencia:", telefonoSeguroPdf],
 
-                [{ content: "5. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
+                [{ content: "6. CONTACTOS DE EMERGENCIA NOTIFICADOS", colSpan: 2, styles: { fillColor: [241, 245, 249], textColor: [51, 65, 85], fontStyle: 'bold', fontSize: 9 } }],
                 ["Contacto 1:", data.contacto1Nombre || "No registrado"],
                 ["Parentesco:", data.contacto1Parentesco || "No especificado"],
                 ["Teléfono:", data.contacto1Telefono || "No registrado"]
-            ];
+            );
 
             if (data.contacto2Nombre) {
                 cuerpoTabla.push(
