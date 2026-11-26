@@ -733,19 +733,15 @@
             const medicoBloque = document.getElementById('contenedor-medico-cabecera');
             const btnLlamarMedico = document.getElementById('btn-llamar-medico');
 
-            if (medicoNombre || medicoTelefono) {
-                medicoBloque.style.display = 'block';
-                document.getElementById('medico-cabecera-nombre').innerText = medicoNombre || "No registrado";
-                document.getElementById('medico-cabecera-telefono').innerText = medicoTelefono || "No registrado";
+            medicoBloque.style.display = 'block';
+            document.getElementById('medico-cabecera-nombre').innerText = medicoNombre || "No registrado";
+            document.getElementById('medico-cabecera-telefono').innerText = medicoTelefono || "No registrado";
 
-                if (medicoTelefono) {
-                    btnLlamarMedico.classList.remove('opacity-50', 'pointer-events-none');
-                    btnLlamarMedico.onclick = () => openEmergencyModal(medicoTelefono);
-                } else {
-                    btnLlamarMedico.classList.add('opacity-50', 'pointer-events-none');
-                }
+            if (medicoTelefono) {
+                btnLlamarMedico.classList.remove('opacity-50', 'pointer-events-none');
+                btnLlamarMedico.onclick = () => openEmergencyModal(medicoTelefono);
             } else {
-                medicoBloque.style.display = 'none';
+                btnLlamarMedico.classList.add('opacity-50', 'pointer-events-none');
             }
             
             document.getElementById('contacto1-nombre').innerText = data.contacto1Nombre || "No registrado";
